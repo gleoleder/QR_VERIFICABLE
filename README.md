@@ -1,5 +1,7 @@
 # 📜 Sistema de Certificados QR con Verificación Criptográfica
 
+> **Demo en vivo:** [Despliega en Render](#-despliegue-en-render-gratis) para obtener tu URL pública gratuita
+
 Sistema profesional de emisión y verificación de certificados digitales mediante códigos QR, con generación de PDFs en memoria y firma criptográfica HMAC-SHA256.
 
 ## 🎯 Características Principales
@@ -213,7 +215,42 @@ La firma se verifica en cada solicitud de verificación para detectar manipulaci
 
 ## 🌐 Despliegue en Producción
 
-### Render (Recomendado)
+### 🚀 Despliegue en Render (Gratis)
+
+**¡Obtén tu URL pública en 5 minutos!**
+
+1. **Crea cuenta en Render:**
+   - Ve a https://render.com
+   - Regístrate con GitHub (recomendado) o email
+
+2. **Crea nuevo Web Service:**
+   - Click en "New +" → "Blueprint"
+   - Conecta tu cuenta de GitHub
+   - Selecciona el repositorio `gleoleder/QR_VERIFICABLE`
+
+3. **Configuración automática:**
+   - El archivo `render.yaml` configura todo automáticamente:
+     - Servicio web Python
+     - Base de datos PostgreSQL
+     - Variables de entorno seguras
+
+4. **Click en "Apply"**
+   - Render construirá y desplegará automáticamente
+   - En ~3 minutos tendrás tu URL pública: `https://qr-verificable-xxxx.onrender.com`
+
+5. **¡Listo!**
+   - Accede a tu URL pública
+   - Prueba emitir y verificar certificados
+   - Comparte el link de verificación
+
+**Ventajas:**
+- ✅ Totalmente gratis (plan free)
+- ✅ HTTPS automático
+- ✅ Base de datos PostgreSQL incluida
+- ✅ Despliegue continuo desde GitHub
+- ✅ Sin configuración manual
+
+---
 
 1. Crear cuenta en [render.com](https://render.com)
 2. Crear nuevo Web Service
