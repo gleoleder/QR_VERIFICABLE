@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificación de Certificados</title>
+    <title>Verificación de Certificados - Escanea el QR</title>
     <style>
         * {
             margin: 0;
@@ -52,6 +52,31 @@
             text-align: center;
             margin-bottom: 30px;
             font-size: 14px;
+        }
+        
+        .qr-instruction {
+            background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .qr-instruction h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .qr-instruction p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+        
+        .qr-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            display: block;
         }
         
         .form-group {
@@ -105,6 +130,26 @@
             transform: translateY(0);
         }
         
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .divider span {
+            padding: 0 15px;
+            color: #999;
+            font-size: 14px;
+        }
+        
         .info-box {
             background: #f8f9fa;
             border-left: 4px solid #0f3460;
@@ -149,6 +194,37 @@
             color: #666;
         }
         
+        .success-banner {
+            display: none;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .success-banner.show {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
         @media (max-width: 480px) {
             .container {
                 padding: 30px 20px;
@@ -168,6 +244,22 @@
             <p class="subtitle">Sistema de Certificación Digital con QR</p>
         </div>
         
+        <div class="qr-instruction" id="qrInstruction">
+            <span class="qr-icon">📱</span>
+            <h3>¡Escanea el código QR!</h3>
+            <p>Usa la cámara de tu celular para escanear el QR del certificado y verificar su autenticidad al instante</p>
+        </div>
+        
+        <div class="success-banner" id="successBanner">
+            <div class="success-icon">✅</div>
+            <h3>¡QR Detectado!</h3>
+            <p>Redirigiendo a la verificación del certificado...</p>
+        </div>
+        
+        <div class="divider">
+            <span>o ingresa manualmente</span>
+        </div>
+        
         <form id="verifyForm">
             <div class="form-group">
                 <label for="token">Token del Certificado</label>
@@ -175,7 +267,7 @@
                     type="text" 
                     id="token" 
                     name="token" 
-                    placeholder="Ingrese el token o escanee el QR"
+                    placeholder="Ej: 0c765e1d-36dd-46a5-b04c-2cb994e0d947"
                     autocomplete="off"
                 >
             </div>
@@ -209,6 +301,24 @@
     </div>
     
     <script>
+        // Verificar si hay un token en la URL (cuando se escanea QR)
+        document.addEventListener('DOMContentLoaded', function() {
+            const path = window.location.pathname;
+            const match = path.match(/\/verify\/([a-f0-9-]+)/i);
+            
+            if (match && match[1]) {
+                // Hay un token en la URL - mostrar banner de éxito
+                document.getElementById('qrInstruction').style.display = 'none';
+                document.getElementById('successBanner').classList.add('show');
+                document.getElementById('token').value = match[1];
+                
+                // Auto-verificar después de 1.5 segundos
+                setTimeout(function() {
+                    window.location.href = '/verify/' + match[1];
+                }, 1500);
+            }
+        });
+        
         document.getElementById('verifyForm').addEventListener('submit', function(e) {
             e.preventDefault();
             

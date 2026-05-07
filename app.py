@@ -2,11 +2,13 @@
 app.py - Aplicación principal del sistema de certificados QR
 
 Endpoints:
-    POST /issue      - Emitir nuevo certificado
-    GET  /verify/<token> - Verificar y descargar certificado PDF
-    PUT  /revoke/<token> - Revocar certificado
-    GET  /health     - Health check
-    GET  /           - Página de verificación web
+    POST /issue                - Emitir nuevo certificado
+    GET  /verify/<token>       - Verificar certificado (redirige a página de éxito en navegador)
+    GET  /verify-success/<token> - Página de éxito con información del certificado
+    GET  /api/certificate/<token> - Obtener datos del certificado (JSON)
+    PUT  /revoke/<token>       - Revocar certificado
+    GET  /health               - Health check
+    GET  /                     - Página de verificación web
 
 Autor: Sistema de Certificados QR
 Fecha: 2026
@@ -18,12 +20,13 @@ from datetime import datetime
 from functools import wraps
 
 from flask import (
-    Flask, 
-    request, 
-    jsonify, 
-    send_file, 
+    Flask,
+    request,
+    jsonify,
+    send_file,
     render_template,
-    make_response
+    make_response,
+    redirect
 )
 from dotenv import load_dotenv
 from flask_limiter import Limiter
@@ -421,16 +424,29 @@ def verify_certificate(token):
                 'success': False,
                 'error': 'Firma de integridad inválida'
             }), 403
-        
+
         # ==========================================
         # CERTIFICADO VÁLIDO - GENERAR PDF
         # ==========================================
+
+        # Registrar auditoría (éxito)
+        log_verification(token, certificate.id, True)
+
+        # Si es una solicitud de navegador (no descarga directa),
+        # redirigir a página de éxito que muestra info y permite descargar
+        accept_header = request.headers.get('Accept', '')
+        is_browser_request = accept_header.find('text/html') >= 0 or accept_header.find('application/pdf') < 0
         
-        # Generar QR para el PDF
+        if is_browser_request:
+            # Redirigir a página de éxito que muestra información del certificado
+            logger.info(f"Certificado verificado (vista web): {token[:8]}...")
+            return redirect(f'/verify-success/{token}')
+
+        # Descarga directa del PDF (para APIs o descarga programática)
         base_url = os.getenv('BASE_URL', request.host_url.rstrip('/'))
         verification_url = f"{base_url}/verify/{token}"
         qr_bytes = generate_qr_bytes(verification_url)
-        
+
         # Generar PDF en memoria
         pdf_buffer = generate_certificate_pdf(
             participant_name=certificate.participant_name,
@@ -443,31 +459,28 @@ def verify_certificate(token):
             qr_image_data=qr_bytes,
             expiry_date=certificate.expiry_date
         )
-        
-        # Registrar auditoría (éxito)
-        log_verification(token, certificate.id, True)
-        
+
         # Preparar respuesta con descarga forzada
         filename = get_pdf_filename(
             certificate.participant_name,
             certificate.course_name,
             certificate.token
         )
-        
+
         response = make_response(send_file(
             pdf_buffer,
             mimetype=get_pdf_content_type(),
             as_attachment=True,
             download_name=filename
         ))
-        
+
         # Headers para forzar descarga y prevenir cache
         response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
         response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
-        
+
         logger.info(f"Certificado verificado y descargado: {token[:8]}...")
-        
+
         return response
         
     except Exception as e:
@@ -568,11 +581,65 @@ def revoke_certificate(token):
 def index():
     """
     Página web para verificación manual de certificados.
-    
+
     Permite a usuarios ingresar un token manualmente
     y ver el estado del certificado en el navegador.
     """
     return render_template('index.html')
+
+
+@app.route('/verify-success/<token>', methods=['GET'])
+def verify_success_page(token):
+    """
+    Página de éxito después de verificar un certificado.
+    Muestra información del certificado con opción de descargar PDF.
+    """
+    return render_template('verify_success.html', token=token)
+
+
+@app.route('/api/certificate/<token>', methods=['GET'])
+@limiter.limit("30 per minute")
+def get_certificate_api(token):
+    """
+    Obtiene información de un certificado (sin descargar PDF).
+    
+    Útil para mostrar detalles en la página de éxito.
+    """
+    try:
+        certificate = Certificate.query.filter_by(token=token).first()
+        
+        if not certificate:
+            return jsonify({
+                'success': False,
+                'error': 'Certificado no encontrado'
+            }), 404
+        
+        if certificate.status != 'active':
+            return jsonify({
+                'success': False,
+                'error': f'Certificado {certificate.status}'
+            }), 403
+        
+        # Verificar expiración
+        if certificate.expiry_date and datetime.utcnow() > certificate.expiry_date:
+            certificate.status = 'expired'
+            db.session.commit()
+            return jsonify({
+                'success': False,
+                'error': 'Certificado expirado'
+            }), 403
+        
+        return jsonify({
+            'success': True,
+            'certificate': certificate.to_dict()
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error al obtener certificado: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Error interno del servidor'
+        }), 500
 
 # ==========================================
 # MANEJADORES DE ERROR

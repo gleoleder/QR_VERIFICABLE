@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado Válido - Verificación Exitosa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 48px;
+            animation: scaleIn 0.5s ease 0.2s both;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        
+        h1 {
+            color: #10b981;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .certificate-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #666;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .info-value {
+            color: #1a1a2e;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: right;
+            max-width: 60%;
+        }
+        
+        .download-section {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.3);
+        }
+        
+        .security-badge {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .security-badge h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .security-badge p {
+            font-size: 12px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .qr-code img {
+            max-width: 150px;
+            border: 5px solid #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .info-value {
+                text-align: left;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-header">
+            <div class="checkmark">✓</div>
+            <h1>¡Certificado Válido!</h1>
+            <p class="subtitle">La autenticidad de este certificado ha sido verificada exitosamente</p>
+        </div>
+        
+        <div class="certificate-info" id="certInfo">
+            <!-- La información se cargará dinámicamente -->
+        </div>
+        
+        <div class="download-section">
+            <a href="#" class="btn-download" id="downloadBtn">
+                📥 Descargar PDF
+            </a>
+        </div>
+        
+        <div class="security-badge">
+            <h3>🔐 Verificación Criptográfica</h3>
+            <p>
+                Este certificado incluye una firma HMAC-SHA256 que garantiza su integridad.
+                Los datos han sido verificados contra nuestra base de datos segura.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Obtener token de la URL
+        const path = window.location.pathname;
+        const match = path.match(/\/verify-success\/([a-f0-9-]+)/i);
+        
+        if (match && match[1]) {
+            const token = match[1];
+            
+            // Cargar información del certificado
+            fetch('/api/certificate/' + token)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const cert = data.certificate;
+                        
+                        // Formatear fecha
+                        const issueDate = new Date(cert.issue_date).toLocaleDateString('es-ES', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                        
+                        // Mostrar información
+                        document.getElementById('certInfo').innerHTML = `
+                            <div class="info-row">
+                                <span class="info-label">Participante</span>
+                                <span class="info-value">${cert.participant_name}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Curso</span>
+                                <span class="info-value">${cert.course_name}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Duración</span>
+                                <span class="info-value">${cert.course_hours} horas</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Institución</span>
+                                <span class="info-value">${cert.institution}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Fecha de Emisión</span>
+                                <span class="info-value">${issueDate}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">ID Certificado</span>
+                                <span class="info-value">${token}</span>
+                            </div>
+                        `;
+                        
+                        // Configurar botón de descarga
+                        document.getElementById('downloadBtn').href = '/verify/' + token;
+                    } else {
+                        // Certificado inválido, redirigir a página de error
+                        window.location.href = '/verify/' + token;
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    window.location.href = '/';
+                });
+        } else {
+            // Redirigir si no hay token
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
