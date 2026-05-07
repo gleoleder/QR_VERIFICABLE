@@ -1,161 +1,116 @@
-# 📜 Sistema de Certificados QR con Verificación Criptográfica
+# 📜 QR Verificable - Sistema de Certificados con Validación QR
 
-> **Demo en vivo:** [Despliega en Render](#-despliegue-en-render-gratis) para obtener tu URL pública gratuita
+> **Demo en vivo:** https://gleoleder.github.io/QR_VERIFICABLE/
 
-Sistema profesional de emisión y verificación de certificados digitales mediante códigos QR, con generación de PDFs en memoria y firma criptográfica HMAC-SHA256.
+Sistema de emisión y verificación de certificados digitales mediante códigos QR, que funciona **100% en el navegador** sin necesidad de servidor backend.
 
-## 🎯 Características Principales
+## ✨ Características
 
-- ✅ **Emisión de certificados** vía API REST
-- ✅ **Verificación instantánea** escaneando QR
-- ✅ **PDFs generados en memoria** (sin almacenamiento en disco)
-- ✅ **Firma HMAC-SHA256** para integridad de datos
-- ✅ **Rate limiting** para protección contra abuso
-- ✅ **Auditoría completa** de todas las verificaciones
-- ✅ **Revocación de certificados** cuando sea necesario
-- ✅ **Diseño responsive** para verificación móvil
+- ✅ **Sin backend:** Funciona con Google Sheets como base de datos
+- ✅ **GitHub Pages:** Despliegue gratuito y automático
+- ✅ **QR dinámico:** Cada certificado tiene un código QR único
+- ✅ **Firma criptográfica:** HMAC-SHA256 para garantizar integridad
+- ✅ **PDF descargable:** Generación de certificados en PDF
+- ✅ **Verificación instantánea:** Escanea QR y valida autenticidad
+- ✅ **Responsive:** Funciona en celular, tablet y desktop
 
-## 🏗️ Arquitectura
+## 🎯 ¿Cómo funciona?
 
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│   Usuario       │────▶│   Flask API      │────▶│   SQLite/       │
-│   (escanea QR)  │     │   (verifica)     │     │   PostgreSQL    │
+│   Usuario       │────▶│   GitHub Pages   │────▶│   Google Apps   │
+│   (escanea QR)  │     │   (HTML + JS)    │     │   Script        │
 └─────────────────┘     └──────────────────┘     └─────────────────┘
-                               │
-                               ▼
-                        ┌──────────────────┐
-                        │   PDF en         │
-                        │   memoria        │
-                        │   (BytesIO)      │
-                        └──────────────────┘
+                                                     │
+                                                     ▼
+                                              ┌──────────────────┐
+                                              │   Google Sheets  │
+                                              │   (Base de datos)│
+                                              └──────────────────┘
 ```
 
-**Principio clave:** Los PDFs NUNCA se almacenan. Se generan bajo demanda y se descartan inmediatamente después de la descarga.
+## 🚀 Despliegue Rápido (10 minutos)
 
-## 📁 Estructura del Proyecto
-
-```
-certificados-qr/
-├── app.py                 # Aplicación Flask principal
-├── models.py              # Modelos de base de datos
-├── utils.py               # Utilidades de seguridad y QR
-├── generador_pdf.py       # Generación de PDFs en memoria
-├── requirements.txt       # Dependencias de Python
-├── .env.example           # Variables de entorno (copiar a .env)
-├── .env                   # Configuración local (no commitear)
-├── templates/
-│   ├── index.html         # Página de verificación
-│   └── verify_error.html  # Página de error
-├── static/                # Archivos estáticos (CSS, JS, imágenes)
-└── README.md              # Este archivo
-```
-
-## 🚀 Instalación Rápida
-
-### 1. Clonar o descargar el proyecto
+### 1. Clona o descarga este repositorio
 
 ```bash
-cd certificados-qr
+git clone https://github.com/gleoleder/QR_VERIFICABLE.git
+cd QR_VERIFICABLE
 ```
 
-### 2. Crear entorno virtual (recomendado)
+### 2. Configura Google Sheets
+
+Sigue las instrucciones en **[CONFIGURACION.md](CONFIGURACION.md)** para:
+- Crear Google Sheet
+- Configurar Google Apps Script
+- Obtener URLs y claves
+
+### 3. Actualiza index.html
+
+Edita la sección `CONFIG` en `index.html`:
+
+```javascript
+const CONFIG = {
+    SHEET_ID: 'TU_SHEET_ID_AQUI',
+    SCRIPT_URL: 'https://script.google.com/macros/s/TU_SCRIPT_ID/exec',
+    HMAC_SECRET: 'tu_clave_secreta'
+};
+```
+
+### 4. Sube a GitHub
 
 ```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
-
-# Linux/Mac
-python3 -m venv venv
-source venv/bin/activate
+git add .
+git commit -m "Configurar sistema de certificados"
+git push origin main
 ```
 
-### 3. Instalar dependencias
+### 5. Activa GitHub Pages
 
-```bash
-pip install -r requirements.txt
+1. Ve a **Settings > Pages** en tu repositorio
+2. Source: **Deploy from a branch**
+3. Branch: **main** / Folder: **/(root)**
+4. Click **Save**
+
+### 6. ¡Listo!
+
+Tu página estará disponible en:
+```
+https://tu-usuario.github.io/QR_VERIFICABLE/
 ```
 
-### 4. Configurar variables de entorno
+## 📱 Uso
 
-```bash
-# Copiar el archivo de ejemplo
-cp .env.example .env
+### Emitir un certificado
 
-# Generar claves seguras
-python -c "import secrets; print('HMAC_SECRET_KEY=' + secrets.token_hex(32))"
-python -c "import secrets; print('SECRET_KEY=' + secrets.token_hex(32))"
-```
+1. Abre tu página web
+2. Click en "Emitir Certificado"
+3. Completa los datos:
+   - Nombre del participante
+   - Identificación (opcional)
+   - Nombre del curso
+   - Duración en horas
+   - Institución emisora
+4. Click en "Generar Certificado"
+5. ¡Listo! Obtendrás:
+   - Token único
+   - Código QR
+   - Enlace de verificación
+   - Botón para descargar PDF
 
-Editar `.env` y pegar las claves generadas.
+### Verificar un certificado
 
-### 5. Inicializar base de datos
+**Opción A - Escanear QR:**
+1. Abre la cámara de tu celular
+2. Escanea el QR del certificado
+3. Se abrirá la página de verificación
+4. Verás si es auténtico o falso
 
-```bash
-python init_db.py
-```
-
-### 6. Iniciar servidor (desarrollo)
-
-```bash
-python app.py
-```
-
-Acceder a: http://localhost:5000
-
-## 📡 Endpoints de la API
-
-### POST /issue
-
-Emite un nuevo certificado.
-
-**Request:**
-```json
-{
-  "participant_name": "Juan Pérez",
-  "participant_id": "12345678",
-  "course_name": "Python Avanzado",
-  "course_hours": 40,
-  "institution": "Universidad XYZ"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "token": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "verification_url": "https://tudominio.com/verify/a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "qr_code": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...",
-  "certificate_id": 1,
-  "hmac_signature": "abc123def456..."
-}
-```
-
-### GET /verify/<token>
-
-Verifica y descarga certificado PDF.
-
-- **200 OK:** Certificado válido, descarga PDF
-- **404 Not Found:** Token no existe
-- **403 Forbidden:** Certificado revocado o expirado
-
-### PUT /revoke/<token>
-
-Revoca un certificado.
-
-**Request:**
-```json
-{
-  "reason": "Emisión duplicada",
-  "revoked_by": "admin@institution.com"
-}
-```
-
-### GET /health
-
-Health check para monitoreo.
+**Opción B - Manual:**
+1. Abre tu página web
+2. Click en "Verificar Certificado"
+3. Ingresa el token
+4. Click en "Verificar Ahora"
 
 ## 🔐 Seguridad
 
@@ -169,317 +124,126 @@ Cada certificado incluye una firma criptográfica calculada sobre:
 - Fecha de emisión
 - Token único
 
-La firma se verifica en cada solicitud de verificación para detectar manipulaciones.
+**¿Por qué es importante?**
+- Si alguien modifica los datos en el Google Sheet, la firma no coincide
+- La verificación falla y se muestra "CERTIFICADO FALSO"
+- Garantiza que los datos no han sido alterados
 
-### Rate Limiting
+### Generación de claves seguras
 
-| Endpoint | Límite |
-|----------|--------|
-| /issue | 20/min |
-| /verify | 10/min |
-| /revoke | 5/min |
+Para generar tu HMAC_SECRET:
+```
+https://generate-secret.vercel.app/32
+```
 
-### Headers de Seguridad
+## 📁 Estructura del Proyecto
 
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `X-XSS-Protection: 1; mode=block`
-- `Strict-Transport-Security` (producción)
-- `Cache-Control: no-store` (respuestas con PDF)
+```
+QR_VERIFICABLE/
+├── index.html          # Aplicación principal (HTML + CSS + JS)
+├── code.js             # Google Apps Script (backend en Google)
+├── CONFIGURACION.md    # Instrucciones detalladas
+└── README.md           # Este archivo
+```
 
-## 🗄️ Base de Datos
+## 🗄️ Base de Datos (Google Sheets)
 
-### Tablas
+Tu hoja de cálculo tendrá estas columnas:
 
-**certificates:**
-- `id`: Primary key
-- `token`: UUID único (indexed)
-- `participant_name`: Nombre del participante
-- `course_name`: Nombre del curso
-- `course_hours`: Duración en horas
-- `institution`: Institución emisora
-- `issue_date`: Fecha de emisión
-- `expiry_date`: Fecha de expiración (nullable)
-- `hmac_signature`: Firma HMAC-SHA256
-- `status`: active | revoked | expired
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| token | Texto | UUID único (clave primaria) |
+| participant_name | Texto | Nombre del participante |
+| participant_id | Texto | DNI/Cédula (opcional) |
+| course_name | Texto | Nombre del curso |
+| course_hours | Número | Duración en horas |
+| institution | Texto | Institución emisora |
+| issue_date | Texto | Fecha ISO 8601 |
+| hmac_signature | Texto | Firma HMAC-SHA256 |
+| status | Texto | active \| revoked \| expired |
+| created_at | Texto | Timestamp de creación |
 
-**audit_logs:**
-- `id`: Primary key
-- `certificate_id`: Foreign key
-- `token`: Token verificado
-- `ip_address`: IP truncada (privacidad)
-- `user_agent`: Navegador del usuario
-- `verified_at`: Timestamp
-- `success`: Éxito del intento
-- `failure_reason`: Motivo de fallo
+## 🌐 URLs del Sistema
 
-## 🌐 Despliegue en Producción
+| URL | Función |
+|-----|---------|
+| `/` | Página principal |
+| `/?verify={token}` | Verificación automática desde QR |
 
-### 🚀 Despliegue en Render (Gratis)
+## 🛠️ Tecnologías
 
-**¡Obtén tu URL pública en 5 minutos!**
+| Componente | Tecnología |
+|------------|------------|
+| Frontend | HTML5, CSS3, JavaScript Vanilla |
+| QR | QRCode.js |
+| PDF | jsPDF (o Google Docs API) |
+| Backend | Google Apps Script |
+| Base de datos | Google Sheets |
+| Hosting | GitHub Pages (gratis) |
 
-1. **Crea cuenta en Render:**
-   - Ve a https://render.com
-   - Regístrate con GitHub (recomendado) o email
+## 📊 Casos de Uso
 
-2. **Crea nuevo Web Service:**
-   - Click en "New +" → "Blueprint"
-   - Conecta tu cuenta de GitHub
-   - Selecciona el repositorio `gleoleder/QR_VERIFICABLE`
+- **Instituciones educativas:** Certificados de cursos
+- **Empresas:** Constancias de capacitación
+- **Eventos:** Certificados de asistencia
+- **Talleres:** Diplomas de participación
+- **Organizaciones:** Credenciales verificables
 
-3. **Configuración automática:**
-   - El archivo `render.yaml` configura todo automáticamente:
-     - Servicio web Python
-     - Base de datos PostgreSQL
-     - Variables de entorno seguras
+## 🔧 Personalización
 
-4. **Click en "Apply"**
-   - Render construirá y desplegará automáticamente
-   - En ~3 minutos tendrás tu URL pública: `https://qr-verificable-xxxx.onrender.com`
+### Cambiar colores
 
-5. **¡Listo!**
-   - Accede a tu URL pública
-   - Prueba emitir y verificar certificados
-   - Comparte el link de verificación
+Edita el CSS en `index.html`:
 
-**Ventajas:**
-- ✅ Totalmente gratis (plan free)
-- ✅ HTTPS automático
-- ✅ Base de datos PostgreSQL incluida
-- ✅ Despliegue continuo desde GitHub
-- ✅ Sin configuración manual
+```css
+/* Color principal (rosado/rojo) */
+background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+
+/* Color secundario (azul oscuro) */
+background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+```
+
+### Cambiar logo/título
+
+```html
+<div class="header">
+    <h1>📜 Tu Institución</h1>
+    <p>Sistema de Certificados</p>
+</div>
+```
+
+### Agregar más campos
+
+1. Agrega el input en `index.html`
+2. Agrega la columna en `code.js`
+3. Incluye el campo en la firma HMAC
+
+## ⚠️ Importante
+
+- **Nunca compartas tu HMAC_SECRET** (es como una contraseña)
+- **Mantén una copia de seguridad** de tu Google Sheet
+- **Prueba con certificados de prueba** antes de usar en producción
+- **El Google Sheet debe estar en tu cuenta** para tener control total
+
+## 📝 Licencia
+
+MIT License - Libre uso para proyectos personales y comerciales.
+
+## 🤝 Soporte
+
+1. Revisa **[CONFIGURACION.md](CONFIGURACION.md)**
+2. Verifica los errores comunes en la sección de troubleshooting
+3. Si el problema persiste, crea un issue en GitHub
+
+## 🎯 Próximas Mejoras (Opcional)
+
+- [ ] Agregar logo de la institución en el PDF
+- [ ] Firmas digitales en el certificado
+- [ ] Múltiples idiomas
+- [ ] Estadísticas de verificaciones
+- [ ] Exportar certificados a Excel
+- [ ] Notificaciones por email
 
 ---
 
-1. Crear cuenta en [render.com](https://render.com)
-2. Crear nuevo Web Service
-3. Conectar repositorio de GitHub
-4. Configurar variables de entorno:
-   - `HMAC_SECRET_KEY`
-   - `SECRET_KEY`
-   - `DATABASE_URL` (PostgreSQL de Render)
-   - `FLASK_ENV=production`
-   - `BASE_URL=https://tu-app.onrender.com`
-5. Deploy
-
-**render.yaml:**
-```yaml
-services:
-  - type: web
-    name: certificados-qr
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
-    envVars:
-      - key: HMAC_SECRET_KEY
-        sync: false
-      - key: SECRET_KEY
-        sync: false
-      - key: DATABASE_URL
-        fromDatabase:
-          name: certificados-db
-          property: connectionString
-    databases:
-      - name: certificados-db
-        databaseName: certificados
-        user: certificados
-```
-
-### Railway
-
-1. Crear cuenta en [railway.app](https://railway.app)
-2. New Project → Deploy from GitHub
-3. Añadir PostgreSQL plugin
-4. Configurar variables en Railway Dashboard
-5. Deploy automático
-
-### VPS (Ubuntu/Debian)
-
-```bash
-# Instalar Python y dependencias
-sudo apt update
-sudo apt install python3 python3-pip python3-venv nginx supervisor
-
-# Clonar proyecto
-git clone https://github.com/tu-usuario/certificados-qr.git
-cd certificados-qr
-
-# Configurar
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-# Editar .env con claves seguras
-
-# Configurar Gunicorn
-sudo nano /etc/supervisor/conf.d/certificados.conf
-```
-
-**/etc/supervisor/conf.d/certificados.conf:**
-```ini
-[program:certificados]
-command=/ruta/certificados-qr/venv/bin/gunicorn app:app --workers 4 --bind 0.0.0.0:8000
-directory=/ruta/certificados-qr
-user=www-data
-autostart=true
-autorestart=true
-redirect_stderr=true
-stdout_logfile=/var/log/certificados/out.log
-```
-
-```bash
-# Configurar Nginx
-sudo nano /etc/nginx/sites-available/certificados
-```
-
-**/etc/nginx/sites-available/certificados:**
-```nginx
-server {
-    listen 80;
-    server_name tudominio.com;
-    
-    location / {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
-```bash
-# Habilitar y reiniciar
-sudo ln -s /etc/nginx/sites-available/certificados /etc/nginx/sites-enabled/
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo systemctl restart nginx
-```
-
-### HTTPS Obligatorio
-
-Para producción, configurar HTTPS con Let's Encrypt:
-
-```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d tudominio.com
-```
-
-## 🧪 Pruebas
-
-### Probar emisión
-
-```bash
-curl -X POST http://localhost:5000/issue \
-  -H "Content-Type: application/json" \
-  -d '{
-    "participant_name": "Juan Pérez",
-    "course_name": "Python Avanzado",
-    "course_hours": 40,
-    "institution": "Universidad XYZ"
-  }'
-```
-
-### Probar verificación
-
-```bash
-# Descargar PDF
-curl -O http://localhost:5000/verify/<token>
-
-# Ver en navegador
-http://localhost:5000/verify/<token>
-```
-
-## 📝 Migración a Firma Digital Avanzada (PAdES/X.509)
-
-Para validez legal ante entidades oficiales (gov, universidades), considerar:
-
-### 1. Firma PAdES (PDF Advanced Electronic Signature)
-
-```python
-# Usando endesive (pip install endesive)
-from endesive.pdf import cms
-
-# Firmar PDF con certificado X.509
-signature_data = cms.sign(
-    pdf_content,
-    private_key,
-    certificate,
-    [],
-    'sha256'
-)
-```
-
-**Requisitos:**
-- Certificado X.509 emitido por CA reconocida
-- HSM o token criptográfico para guardar clave privada
-- Timestamping Authority (TSA) para sello de tiempo
-
-### 2. Validación Legal
-
-- **España:** @firma, AutoFirma
-- **UE:** eIDAS regulation
-- **Latinoamérica:** Cada país tiene su normativa (ej. SAT en México, AFIP en Argentina)
-
-### 3. Consideraciones
-
-| Característica | HMAC-SHA256 | PAdES/X.509 |
-|---------------|-------------|-------------|
-| Costo | Gratis | Certificado pago (~$100-500/año) |
-| Validez legal | Interna | Oficial/gubernamental |
-| Complejidad | Baja | Alta |
-| Verificación | Propia | Lectores PDF estándar |
-
-## 🔧 Troubleshooting
-
-### Error: "HMAC_SECRET_KEY no configurada"
-
-```bash
-# Generar nueva clave
-python -c "import secrets; print(secrets.token_hex(32))"
-
-# Agregar a .env
-echo "HMAC_SECRET_KEY=tu_clave_generada" >> .env
-```
-
-### Error: "Database locked" (SQLite)
-
-```bash
-# En producción, migrar a PostgreSQL
-# Editar .env:
-DATABASE_URL=postgresql://user:pass@host:5432/dbname
-```
-
-### Rate limit muy bajo
-
-Editar `.env`:
-```
-RATE_LIMIT_PER_MINUTE=30
-```
-
-### PDF no se descarga
-
-Verificar headers en navegador (DevTools → Network):
-- `Content-Disposition: attachment` debe estar presente
-- `Content-Type: application/pdf`
-
-## 📄 Licencia
-
-MIT License - Ver LICENSE para detalles.
-
-## 🤝 Contribuciones
-
-1. Fork el repositorio
-2. Crear feature branch (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit cambios (`git commit -m 'Añadir nueva funcionalidad'`)
-4. Push (`git push origin feature/nueva-funcionalidad`)
-5. Abrir Pull Request
-
-## 📞 Soporte
-
-Para issues o preguntas, abrir un issue en GitHub o contactar al equipo de desarrollo.
-
----
-
-**Hecho con ❤️ para certificación digital segura**
+**Hecho con ❤️ para certificación digital accesible y verificable**
