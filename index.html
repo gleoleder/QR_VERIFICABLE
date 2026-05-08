@@ -126,63 +126,82 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            backdrop-filter: blur(5px);
         }
         .login-box {
             background: white;
-            padding: 40px;
+            padding: 50px 40px 40px;
             border-radius: 20px;
-            max-width: 400px;
+            max-width: 380px;
             width: 90%;
             position: relative;
-        }
-        .login-box .logo {
-            display: block;
-            margin: 0 auto 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
         }
         .login-close {
             position: absolute;
             top: 15px;
             right: 15px;
-            width: 30px;
-            height: 30px;
-            background: #e0e0e0;
-            border: none;
+            width: 36px;
+            height: 36px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
             border-radius: 50%;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
-            color: #666;
-            line-height: 30px;
+            color: #999;
+            line-height: 32px;
             text-align: center;
             padding: 0;
             transition: all 0.3s;
         }
         .login-close:hover {
             background: #d4af37;
+            border-color: #d4af37;
             color: white;
         }
-        .login-box h2 { color: #1a1a2e; margin-bottom: 20px; }
+        .login-box .logo {
+            display: block;
+            margin: 0 auto 25px;
+        }
+        .login-box h2 {
+            color: #1a1a2e;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 24px;
+        }
         .login-box input {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
         }
-        .login-box input:focus { outline: none; border-color: #d4af37; }
+        .login-box input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+        }
         .login-box button {
             width: 100%;
             padding: 15px;
             background: #d4af37;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
         }
-        .login-box button:hover { background: #b8941f; }
+        .login-box button:hover {
+            background: #b8941f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212,175,55,0.3);
+        }
         .logout-btn { background: #dc3545 !important; padding: 8px 15px; font-size: 12px; }
         .logout-btn:hover { background: #c82333 !important; }
         .certificados-list { margin-top: 20px; max-height: 400px; overflow-y: auto; }
@@ -225,16 +244,16 @@
     <!-- Login Overlay -->
     <div id="loginOverlay" class="login-overlay hidden">
         <div class="login-box">
-            <svg class="logo" viewBox="0 0 100 100">
+            <button class="login-close" onclick="closeLogin()" title="Cerrar">×</button>
+            <svg class="logo" viewBox="0 0 100 100" style="width: 80px; height: 80px;">
                 <circle cx="50" cy="50" r="45" fill="#d4af37"/>
                 <path d="M50 15 L50 85 M30 35 L50 15 L70 35 M35 50 L65 50 M30 65 L50 85 L70 65" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
             </svg>
-            <button class="login-close" onclick="closeLogin()" title="Cerrar">✕</button>
             <h2>Acceso Admin</h2>
-            <input type="text" id="adminUser" placeholder="Usuario" />
+            <input type="text" id="adminUser" placeholder="Usuario" autocomplete="off" />
             <input type="password" id="adminPass" placeholder="Contraseña" />
             <button onclick="login()">Ingresar</button>
-            <p id="loginError" style="color: #dc3545; margin-top: 15px; display: none;">Usuario o contraseña incorrectos</p>
+            <p id="loginError" style="color: #dc3545; margin-top: 15px; display: none; text-align: center; font-size: 14px;">❌ Usuario o contraseña incorrectos</p>
         </div>
     </div>
 
