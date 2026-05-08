@@ -2,7 +2,7 @@
    RESPONSIVE - MULTIPLES PANTALLAS
    =========================================== */
 
-/* Sello CEAN - Centrado en el recuadro de los 4 datos - Altura completa */
+/* Sello CEAN - Centrado en el recuadro de los 4 datos - Responsive Multi-pantalla */
 .result.success > div[style*="background"] > div {
     position: relative !important;
     padding: 10px !important;
@@ -10,12 +10,11 @@
 .result.success > div[style*="background"] > div::after {
     content: '' !important;
     position: absolute !important;
-    top: 0 !important;
+    top: 50% !important;
     left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: auto !important;
-    height: 100% !important;
-    min-height: 100px !important;
+    transform: translate(-50%, -50%) !important;
+    width: 80px !important;
+    height: 80px !important;
     background-image: url('sello-cean.png') !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
@@ -24,6 +23,30 @@
     z-index: 1 !important;
     pointer-events: none !important;
     animation: metalShine 3s ease-in-out infinite !important;
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    .result.success > div[style*="background"] > div::after {
+        width: 60px !important;
+        height: 60px !important;
+    }
+}
+
+/* Tablets (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .result.success > div[style*="background"] > div::after {
+        width: 70px !important;
+        height: 70px !important;
+    }
+}
+
+/* Desktops (769px+) */
+@media (min-width: 769px) {
+    .result.success > div[style*="background"] > div::after {
+        width: 90px !important;
+        height: 90px !important;
+    }
 }
 
 /* Animación de brillo metálico */
