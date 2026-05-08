@@ -102,11 +102,21 @@
     .result.success {
         padding: 10px 8px !important;
         position: relative !important;
+        padding-bottom: 80px !important;
+    }
+    .result.success::after {
+        content: '' !important;
+        position: absolute !important;
+        bottom: 10px !important;
+        right: 10px !important;
+        width: 70px !important;
+        height: 70px !important;
         background-image: url('sello-cean.png') !important;
         background-repeat: no-repeat !important;
-        background-position: bottom right !important;
-        background-size: 60px 60px !important;
-        padding-bottom: 70px !important;
+        background-position: center !important;
+        background-size: contain !important;
+        opacity: 0.5 !important;
+        z-index: 1 !important;
     }
     .result.success h3 {
         font-size: 14px !important;
