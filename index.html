@@ -377,8 +377,11 @@
         // NAVEGACIÓN Y AUTENTICACIÓN
         // ===========================================
         function switchTab(tab) {
+            // Quitar active de todos
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // Activar el seleccionado
             document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
             document.getElementById(`tab-${tab}`).classList.add('active');
 
