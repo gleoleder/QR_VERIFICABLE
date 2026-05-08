@@ -2,24 +2,25 @@
    RESPONSIVE - MULTIPLES PANTALLAS
    =========================================== */
 
-/* Sello CEAN - Centrado en el recuadro de los 4 datos */
+/* Sello CEAN - Centrado en el recuadro de los 4 datos - Altura completa */
 .result.success > div[style*="background"] > div {
     position: relative !important;
-    padding: 20px 10px 80px 10px !important;
+    padding: 10px !important;
 }
 .result.success > div[style*="background"] > div::after {
     content: '' !important;
     position: absolute !important;
-    top: 50% !important;
+    top: 0 !important;
     left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 100px !important;
-    height: 100px !important;
+    transform: translateX(-50%) !important;
+    width: auto !important;
+    height: 100% !important;
+    min-height: 100px !important;
     background-image: url('sello-cean.png') !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
     background-size: contain !important;
-    opacity: 0.4 !important;
+    opacity: 0.3 !important;
     z-index: 1 !important;
     pointer-events: none !important;
     animation: metalShine 3s ease-in-out infinite !important;
