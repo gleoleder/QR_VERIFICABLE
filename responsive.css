@@ -115,8 +115,9 @@
         background-repeat: no-repeat !important;
         background-position: center !important;
         background-size: contain !important;
-        opacity: 0.5 !important;
-        z-index: 1 !important;
+        opacity: 1 !important;
+        z-index: 9999 !important;
+        pointer-events: none !important;
     }
     .result.success h3 {
         font-size: 14px !important;
