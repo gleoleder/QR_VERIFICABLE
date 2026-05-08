@@ -1,1 +1,1987 @@
-<!DOCTYPE html><html lang="es"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Verificador de Certificados - CEAN Capacitación</title>        <!-- Librería para generar códigos QR -->    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>        <!-- ===========================================         ESTILOS CSS - DISEÑO DEL SISTEMA         =========================================== -->    <link rel="stylesheet" href="responsive.css" />    <style>        /* ===========================================           ICONOS SVG - LIBRERÍA DE ICONOS           =========================================== */        .icon {            width: 20px;            height: 20px;            fill: currentColor;            vertical-align: middle;        }                .icon-lg {            width: 24px;            height: 24px;        }                .icon-xl {            width: 32px;            height: 32px;        }        /* ===========================================           RESET Y ESTILOS GENERALES           =========================================== */        * {            margin: 0;            padding: 0;            box-sizing: border-box;        }        body {            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);            min-height: 100vh;            display: flex;            justify-content: center;            align-items: center;            padding: 20px;        }        /* ===========================================           CONTENEDOR PRINCIPAL           =========================================== */        .container {            background: white;            border-radius: 20px;            padding: 40px;            max-width: 700px;            width: 100%;            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);            text-align: center;        }        /* Logo dorado del CEAN */        .logo {            width: 100px;            height: 100px;            margin-bottom: 15px;        }        /* Título principal */        h1 {            color: #1a1a2e;            font-size: 22px;            margin-bottom: 10px;        }        /* Subtítulo */        .subtitle {            color: #666;            font-size: 14px;            margin-bottom: 25px;        }        /* ===========================================           PESTAÑAS DE NAVEGACIÓN           =========================================== */        .tabs {            display: flex;            gap: 10px;            margin-bottom: 25px;        }        .tab {            flex: 1;            padding: 12px;            border: none;            border-radius: 10px;            font-size: 14px;            font-weight: bold;            cursor: pointer;            transition: all 0.3s;            background: #f0f0f0;            color: #666;        }        /* Pestaña activa (dorada) */        .tab.active {            background: #d4af37;            color: white;        }        /* Contenido de pestañas */        .tab-content {            display: none;        }        .tab-content.active {            display: block;        }        /* ===========================================           CAJAS DE BÚSQUEDA Y FORMULARIOS           =========================================== */        .search-box {            display: flex;            gap: 10px;            margin-bottom: 20px;        }        .search-box input {            flex: 1;            padding: 15px;            border: 2px solid #e0e0e0;            border-radius: 10px;            font-size: 16px;            transition: border-color 0.3s;        }        .search-box input:focus {            outline: none;            border-color: #d4af37;        }        /* Botones dorados */        .search-box button, .form-box button {            padding: 15px 25px;            background: #d4af37;            color: white;            border: none;            border-radius: 10px;            font-size: 14px;            font-weight: bold;            cursor: pointer;            transition: background 0.3s;        }        .search-box button:hover, .form-box button:hover {            background: #b8941f;        }        .search-box button:disabled, .form-box button:disabled {            background: #ccc;            cursor: not-allowed;        }        /* ===========================================           FORMULARIO DE GENERACIÓN           =========================================== */        .form-box {            text-align: left;        }        .form-group {            margin-bottom: 15px;        }        .form-group label {            display: block;            margin-bottom: 5px;            color: #333;            font-weight: 600;            font-size: 14px;        }        .form-group input, .form-group select {            width: 100%;            padding: 12px;            border: 2px solid #e0e0e0;            border-radius: 10px;            font-size: 14px;            transition: border-color 0.3s;        }        .form-group input:focus, .form-group select:focus {            outline: none;            border-color: #d4af37;        }        /* ===========================================           RESULTADOS (VERIFICACIÓN/GENERACIÓN)           =========================================== */        .result {            margin-top: 25px;            padding: 25px;            border-radius: 15px;            display: none;            animation: slideIn 0.5s ease;        }        /* Resultado exitoso (dorado) */        .result.success {            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);            color: white;            display: block;        }        /* Resultado error (rojo) */        .result.error {            background: #ffe6e6;            color: #cc0000;            display: block;        }        /* Resultado cargando (gris) */        .result.loading {            background: #f0f0f0;            color: #666;            display: block;        }        /* Animación de entrada */        @keyframes slideIn {            from {                opacity: 0;                transform: translateY(20px);            }            to {                opacity: 1;                transform: translateY(0);            }        }        .verified-badge {            font-size: 50px;            margin-bottom: 15px;        }        /* Animación del check de verificación */        .check-verified {            width: 50px;            height: 50px;            color: #4ade80;            animation: checkBounce 0.6s ease, checkPulse 2s ease-in-out infinite;            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 60px rgba(74, 222, 128, 0.3));        }        @keyframes checkBounce {            0% {                transform: scale(0) rotate(-45deg);                opacity: 0;            }            50% {                transform: scale(1.2) rotate(5deg);            }            100% {                transform: scale(1) rotate(0deg);                opacity: 1;            }        }        @keyframes checkPulse {            0%, 100% {                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 60px rgba(74, 222, 128, 0.3));                transform: scale(1);            }            50% {                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1)) drop-shadow(0 0 60px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 80px rgba(74, 222, 128, 0.5));                transform: scale(1.05);            }        }        .certificate-info {            text-align: left;            margin-top: 20px;        }        .certificate-info h3 {            font-size: 16px;            margin-bottom: 15px;            border-bottom: 2px solid rgba(255, 255, 255, 0.5);            padding-bottom: 10px;        }        .info-row {            display: flex;            justify-content: space-between;            padding: 8px 0;            border-bottom: 1px solid rgba(255, 255, 255, 0.3);            font-size: 14px;        }        .info-row:last-child {            border-bottom: none;        }        .info-label {            font-weight: bold;            opacity: 0.9;        }        .info-value {            opacity: 0.95;        }        /* ===========================================           MENSAJES E INDICACIONES           =========================================== */        .scan-hint {            margin-top: 25px;            padding: 15px;            background: #f8f9fa;            border-radius: 10px;            color: #666;            font-size: 13px;        }        .scan-hint strong {            color: #d4af37;        }        .success-message {            background: #d4edda;            color: #155724;            padding: 15px;            border-radius: 10px;            margin-top: 15px;            display: none;        }        /* ===========================================           CÓDIGO QR Y ACCIONES           =========================================== */        .qr-container {            margin-top: 20px;            padding: 20px;            background: white;            border-radius: 15px;            display: inline-block;        }        .qr-actions {            margin-top: 20px;            display: flex;            gap: 10px;            justify-content: center;        }        .qr-actions button {            padding: 10px 20px;            font-size: 13px;        }        .btn-secondary {            background: #6c757d !important;        }        .btn-secondary:hover {            background: #5a6268 !important;        }        /* ===========================================           LOGIN DE ADMINISTRADOR           =========================================== */        .login-overlay {            position: fixed;            top: 0;            left: 0;            width: 100%;            height: 100%;            background: linear-gradient(135deg, rgba(26,26,46,0.95) 0%, rgba(22,33,62,0.95) 100%);            display: flex;            justify-content: center;            align-items: center;            z-index: 1000;            backdrop-filter: blur(10px);        }        .login-card {            background: white;            border-radius: 24px;            padding: 0;            max-width: 420px;            width: 90%;            position: relative;            box-shadow: 0 30px 100px rgba(0,0,0,0.4);            overflow: hidden;            animation: slideUp 0.4s ease;        }        @keyframes slideUp {            from {                opacity: 0;                transform: translateY(30px);            }            to {                opacity: 1;                transform: translateY(0);            }        }        /* Header dorado del login */        .login-header {            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);            padding: 40px 30px;            text-align: center;            position: relative;        }        .login-header .logo { width: 140px; height: 140px; margin: 0 auto 15px; display: block; filter: drop-shadow(0 0 30px rgba(255,255,255,1)) drop-shadow(0 0 60px rgba(255,255,255,0.9)) drop-shadow(0 0 90px rgba(255,255,255,0.7)) drop-shadow(0 0 120px rgba(255,255,255,0.5)); }        .login-header h2 {            color: white;            font-size: 26px;            margin: 0;            text-shadow: 0 2px 10px rgba(0,0,0,0.2);        }        .login-header p {            color: rgba(255,255,255,0.9);            font-size: 14px;            margin: 8px 0 0;        }        /* Botón X para cerrar */        .login-close {            position: absolute;            top: 15px;            right: 15px;            width: 40px;            height: 40px;            background: rgba(255,255,255,0.2);            border: 2px solid rgba(255,255,255,0.3);            border-radius: 50%;            font-size: 22px;            cursor: pointer;            color: white;            display: flex;            align-items: center;            justify-content: center;            transition: all 0.3s;            padding: 0;        }        .login-close:hover {            background: white;            color: #d4af37;            transform: rotate(90deg);        }        /* Cuerpo del formulario */        .login-body {            padding: 40px 30px;        }        .input-group {            margin-bottom: 20px;            position: relative;        }        .input-group label {            display: block;            margin-bottom: 8px;            color: #333;            font-weight: 600;            font-size: 14px;        }        .input-wrapper {            position: relative;        }        .input-wrapper input {            width: 100%;            padding: 16px 16px 16px 50px;            border: 2px solid #e0e0e0;            border-radius: 14px;            font-size: 15px;            transition: all 0.3s;            background: #fafafa;        }        .input-wrapper input:focus {            outline: none;            border-color: #d4af37;            background: white;            box-shadow: 0 0 0 4px rgba(212,175,55,0.1);        }        .input-icon {            position: absolute;            left: 18px;            top: 50%;            transform: translateY(-50%);            font-size: 18px;            color: #999;            transition: color 0.3s;        }        .input-wrapper input:focus + .input-icon {            color: #d4af37;        }        .login-btn {            width: 100%;            padding: 16px;            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);            color: white;            border: none;            border-radius: 14px;            font-size: 16px;            font-weight: bold;            cursor: pointer;            transition: all 0.3s;            margin-top: 10px;            box-shadow: 0 5px 20px rgba(212,175,55,0.3);        }        .login-btn:hover {            transform: translateY(-3px);            box-shadow: 0 10px 30px rgba(212,175,55,0.4);        }        .login-btn:active {            transform: translateY(-1px);        }        .login-error {            background: #ffe6e6;            color: #cc0000;            padding: 14px 18px;            border-radius: 12px;            margin-top: 20px;            font-size: 14px;            display: none;            border-left: 4px solid #cc0000;        }        .login-footer {            text-align: center;            margin-top: 25px;            padding-top: 25px;            border-top: 1px solid #e0e0e0;            font-size: 13px;            color: #999;        }        /* Botón de cerrar sesión */        .logout-btn {            background: linear-gradient(135deg, #dc3545 0%, #ef4757 100%);            color: white;            border: none;            padding: 10px 20px;            border-radius: 10px;            font-size: 13px;            font-weight: 600;            cursor: pointer;            transition: all 0.3s;            box-shadow: 0 4px 15px rgba(220,53,69,0.3);        }        .logout-btn:hover {            background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);            transform: translateY(-2px);            box-shadow: 0 6px 20px rgba(220,53,69,0.4);        }        /* ===========================================           LISTA DE CERTIFICADOS (BUSCADOR)           =========================================== */        .certificados-list {            margin-top: 20px;            max-height: 400px;            overflow-y: auto;        }        .cert-item {            background: #f8f9fa;            padding: 15px;            margin-bottom: 10px;            border-radius: 10px;            text-align: left;            cursor: pointer;            transition: all 0.3s;        }        .cert-item:hover {            background: #e9ecef;            transform: translateX(5px);        }        .cert-item-header {            display: flex;            justify-content: space-between;            align-items: center;            margin-bottom: 10px;        }        .cert-item-name {            font-weight: bold;            color: #1a1a2e;        }        .cert-item-curso {            color: #d4af37;            font-size: 13px;        }        .cert-item-info {            font-size: 12px;            color: #666;        }        .cert-item-actions {            display: flex;            gap: 10px;            margin-top: 10px;        }        .cert-item-actions button {            padding: 8px 15px;            font-size: 12px;            border: none;            border-radius: 8px;            cursor: pointer;            transition: all 0.3s;            font-weight: 600;        }        /* Botón Ver QR (dorado) */        .btn-view-qr {            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);            color: white;        }        .btn-view-qr:hover {            transform: translateY(-2px);            box-shadow: 0 5px 15px rgba(212,175,55,0.3);        }        /* Botón Link (gris) */        .btn-link {            background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);            color: white;        }        .btn-link:hover {            background: linear-gradient(135deg, #5a6268 0%, #6c757d 100%);            transform: translateY(-2px);        }        .filter-group {            display: flex;            gap: 10px;            margin-bottom: 15px;        }        .filter-group input, .filter-group select {            flex: 1;            padding: 12px;            border: 2px solid #e0e0e0;            border-radius: 10px;            font-size: 14px;        }        /* ===========================================           MODAL PARA VER QR           =========================================== */        .qr-modal-overlay {            position: fixed;            top: 0;            left: 0;            width: 100%;            height: 100%;            background: rgba(0,0,0,0.8);            display: flex;            justify-content: center;            align-items: center;            z-index: 2000;            backdrop-filter: blur(5px);        }        .qr-modal {            background: white;            border-radius: 20px;            padding: 30px;            max-width: 400px;            width: 90%;            text-align: center;            position: relative;            animation: slideUp 0.3s ease;        }        .qr-modal h3 {            color: #1a1a2e;            margin-bottom: 20px;            font-size: 18px;        }        .qr-modal .qr-preview {            margin: 20px auto;            display: inline-block;        }        .qr-modal-actions {            display: flex;            gap: 10px;            justify-content: center;            margin-top: 20px;        }        .qr-modal-actions button {            padding: 12px 25px;            border-radius: 10px;            font-size: 14px;            font-weight: 600;            cursor: pointer;            transition: all 0.3s;            border: none;        }        .qr-modal-close {            position: absolute;            top: 15px;            right: 15px;            width: 32px;            height: 32px;            background: #f0f0f0;            border: none;            border-radius: 50%;            font-size: 18px;            cursor: pointer;            color: #666;            display: flex;            align-items: center;            justify-content: center;            transition: all 0.3s;        }        .qr-modal-close:hover {            background: #d4af37;            color: white;        }        /* ===========================================           ELEMENTOS OCULTOS Y BADGE ADMIN           =========================================== */        .hidden {            display: none !important;        }        .admin-badge {            background: #d4af37;            color: white;            padding: 5px 15px;            border-radius: 20px;            font-size: 12px;            font-weight: bold;            margin-left: 10px;        }        /* Botón de acceso admin */        .btn-login-access {            background: #1a1a2e;            color: white;            border: none;            padding: 10px 20px;            border-radius: 10px;            font-size: 13px;            cursor: pointer;            display: flex;            align-items: center;            gap: 8px;            margin: 0 auto 20px;            transition: all 0.3s;        }        .btn-login-access:hover {            background: #2a2a4e;            transform: translateY(-2px);        }        /* ===========================================           ESTILOS DE IMPRESIÓN           =========================================== */        @media print {            body * {                visibility: hidden;            }            .qr-container, .qr-container * {                visibility: visible;            }            .qr-container {                position: absolute;                left: 50%;                top: 50%;                transform: translate(-50%, -50%);            }        }    </style></head><body>    <!-- ===========================================         LOGIN DE ADMINISTRADOR (OVERLAY)         =========================================== -->    <div id="loginOverlay" class="login-overlay hidden">        <div class="login-card">            <!-- Header dorado -->            <div class="login-header">                <button class="login-close" onclick="closeLogin()" title="Cerrar">×</button>                <img src="logo-cean.png" alt="CEAN" class="logo" style="width: 140px; height: 140px; object-fit: contain;" />                <h2>Acceso Admin</h2>                <p>Sistema de Certificados CEAN</p>            </div>                        <!-- Cuerpo del formulario -->            <div class="login-body">                <div class="input-group">                    <label>Usuario</label>                    <div class="input-wrapper">                        <input type="text" id="adminUser" placeholder="Ingresa tu usuario" autocomplete="off" />                        <span class="input-icon">                            <svg class="icon" viewBox="0 0 24 24">                                <circle cx="12" cy="8" r="4" fill="currentColor"/>                                <path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-6-2-6-8-6z" fill="currentColor"/>                            </svg>                        </span>                    </div>                </div>                                <div class="input-group">                    <label>Contraseña</label>                    <div class="input-wrapper">                        <input type="password" id="adminPass" placeholder="Ingresa tu contraseña" autocomplete="off" />                        <span class="input-icon">                            <svg class="icon" viewBox="0 0 24 24">                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor" opacity="0.3"/>                                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>                                <circle cx="12" cy="16" r="2" fill="currentColor"/>                            </svg>                        </span>                    </div>                </div>                                <button class="login-btn" onclick="login()">                    <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24">                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor"/>                        <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>                    </svg>                    Ingresar al Sistema                </button>                                <div id="loginError" class="login-error">                    <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                        <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>                        <path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                    </svg>                    Usuario o contraseña incorrectos                </div>                                <div class="login-footer">                    <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor" opacity="0.3"/>                        <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>                    </svg>                    Acceso exclusivo para administradores                </div>            </div>        </div>    </div>    <!-- ===========================================         MODAL PARA VER QR (PREVISUALIZACIÓN)         =========================================== -->    <div id="qrModalOverlay" class="qr-modal-overlay hidden">        <div class="qr-modal">            <button class="qr-modal-close" onclick="closeQRModal()">×</button>            <h3 id="qrModalTitle">Vista Previa del QR</h3>            <div class="qr-preview">                <div id="qrModalContent"></div>            </div>            <p id="qrModalNombre" style="color: #666; font-size: 14px; margin-top: 15px;"></p>            <div class="qr-modal-actions">                <button class="btn-view-qr" onclick="descargarQRModal()">                    <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">                        <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>                        <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>                    </svg>                    Descargar                </button>                <button class="btn-link" onclick="closeQRModal()">                    <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">                        <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>                    </svg>                    Cerrar                </button>            </div>        </div>    </div>    <!-- ===========================================         CONTENEDOR PRINCIPAL         =========================================== -->    <div class="container">        <!-- Logo CEAN -->        <img src="logo-cean.png" alt="CEAN" class="logo" style="width: 140px; height: 140px; object-fit: contain;" />        <!-- Título con badge de admin -->        <h1>            CEAN Capacitación             <span id="adminBadge" class="admin-badge hidden">ADMIN</span>        </h1>        <p class="subtitle">Sistema de Certificados</p>        <!-- Botón de Login Admin (visible cuando no está logueado) -->        <div id="loginContainer">            <button class="btn-login-access" onclick="openLogin()">                <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24">                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor"/>                    <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>                </svg>                Acceso Admin            </button>        </div>        <!-- ===========================================             PESTAÑAS DE NAVEGACIÓN             =========================================== -->        <div class="tabs">            <button class="tab active" onclick="switchTab('verificar')">                <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>                    <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                </svg>                Verificar            </button>            <button class="tab" onclick="checkAuthAndOpen('generar')">                <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" fill="none"/>                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                </svg>                Generar QR            </button>            <button class="tab" onclick="checkAuthAndOpen('buscar')">                <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>                    <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                    <path d="M11 8v6M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                </svg>                Buscar QR            </button>        </div>        <!-- ===========================================             PESTAÑA 1: VERIFICAR CERTIFICADO (PÚBLICO)             =========================================== -->        <div id="tab-verificar" class="tab-content active">            <div class="search-box">                <input type="text" id="codigoInput" placeholder="Ingresa el código del certificado" />                <button onclick="verificarCertificado()" id="btnVerificar">Verificar</button>            </div>                        <!-- Resultado de la verificación -->            <div id="resultado" class="result"></div>            <div class="scan-hint">                <strong>📱 ¿Escaneaste un QR?</strong><br>                El código se cargará automáticamente. Si no es así, ingrésalo manualmente arriba.            </div>        </div>        <!-- ===========================================             PESTAÑA 2: GENERAR CERTIFICADO (SOLO ADMIN)             =========================================== -->        <div id="tab-generar" class="tab-content">            <div style="text-align: right; margin-bottom: 10px;">                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>            </div>                        <div class="form-box">                <div class="form-group">                    <label for="nombreAlumno">Nombre del Alumno *</label>                    <input type="text" id="nombreAlumno" placeholder="Ej: Juan Pérez García" />                </div>                <div class="form-group">                    <label for="cursoSelect">Curso *</label>                    <!-- Buscador de cursos -->                    <div class="search-box" style="margin-bottom: 10px;">                        <input type="text" id="searchCursoGenerar" placeholder="🔎 Buscar curso por nombre..."                                onkeyup="buscarCursoParaGenerar()" />                        <button onclick="buscarCursoParaGenerar()" type="button">                            <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                            </svg>                            Buscar                        </button>                    </div>                    <select id="cursoSelect" onchange="actualizarHorasCurso()">                        <option value="">Seleccionar curso...</option>                    </select>                </div>                <div class="form-group">                    <label for="horasCurso">Horas del Curso</label>                    <input type="text" id="horasCurso" placeholder="Ej: 40 horas" readonly />                </div>                <div class="form-group">                    <label for="fechaEmision">Fecha de Emisión *</label>                    <input type="date" id="fechaEmision" />                </div>                <div class="form-group">                    <label for="estadoCertificado">Estado</label>                    <select id="estadoCertificado">                        <option value="Activo">Activo</option>                        <option value="Suspendido">Suspendido</option>                        <option value="Revocado">Revocado</option>                    </select>                </div>                <button onclick="generarCertificado()" id="btnGenerar">Generar Certificado</button>                <!-- Resultado de generación -->                <div id="qrResultado" class="result"></div>                <div id="successMessage" class="success-message"></div>            </div>        </div>        <!-- ===========================================             PESTAÑA 3: BUSCAR CERTIFICADO (SOLO ADMIN)             =========================================== -->        <div id="tab-buscar" class="tab-content">            <div style="text-align: right; margin-bottom: 10px;">                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>            </div>                        <div class="form-box">                <!-- Filtros de búsqueda -->                <div class="filter-group">                    <input type="text" id="searchNombre" placeholder="Buscar por nombre..."                            onkeyup="filtrarCertificados()" />                    <select id="searchCurso" onchange="filtrarCertificados()">                        <option value="">Todos los cursos</option>                    </select>                </div>                <!-- Buscador de cursos específico -->                <div class="search-box" style="margin-bottom: 15px;">                    <input type="text" id="searchCursoTexto" placeholder="🔎 Buscar curso por nombre..."                            onkeyup="buscarCursoPorTexto()" />                    <button onclick="buscarCursoPorTexto()">                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>                            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                        </svg>                        Buscar Curso                    </button>                </div>                <div class="search-box">                    <input type="text" id="searchCodigo" placeholder="O busca por código..."                            onkeyup="filtrarCertificados()" />                    <button onclick="filtrarCertificados()">                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>                            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                            <path d="M11 8v6M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                        </svg>                        Buscar                    </button>                </div>                <!-- Lista de resultados -->                <div id="certificadosList" class="certificados-list">                    <p style="color: #666; text-align: center;">                        Cargando certificados...                    </p>                </div>            </div>        </div>    </div>    <!-- ===========================================         LÓGICA JAVASCRIPT         =========================================== -->    <script>        // ===========================================        // CONFIGURACIÓN - CONEXIÓN A GOOGLE SHEETS        // ===========================================        const API_KEY = 'AIzaSyAOhGTjJXHhuUhqf1g2DPCla59xNzftb-Q';        const SPREADSHEET_ID = '1zB0M4mq956OrfWzGj7Bo73QeM4bp8QNRRk1tagD78Xw';        const RANGE_READ = 'Certificados!A:E';      // Rango para leer certificados        const RANGE_CURSOS = 'Cursos!A:C';          // Rango para leer cursos        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLWXUH4IHL8foVJA6L4saLNgVfmllXqqqekNHVhoiw9ocykBzkTIAx1JRkeSOqGAsK8Q/exec';        const VERIFY_URL = 'https://gleoleder.github.io/QR_VERIFICABLE/';        // ===========================================        // VARIABLES DE ESTADO        // ===========================================        let isAdmin = false;              // Estado de autenticación        let cursosData = [];              // Lista de cursos        let certificadosData = [];        // Lista de certificados        let cursosListenerAdded = false;  // Control para evitar múltiples listeners        // ===========================================        // INICIALIZACIÓN AL CARGAR LA PÁGINA        // ===========================================        window.onload = async function() {            // Verificar si hay código en la URL (cuando escanean QR)            const urlParams = new URLSearchParams(window.location.search);            const codigo = urlParams.get('codigo') || urlParams.get('code') || urlParams.get('cert');                        if (codigo) {                document.getElementById('codigoInput').value = codigo;                await verificarCertificado();            }            // Establecer fecha de hoy por defecto en el formulario            const hoy = new Date().toISOString().split('T')[0];            document.getElementById('fechaEmision').value = hoy;            // Verificar si hay sesión guardada de administrador            const savedAuth = localStorage.getItem('ceanAdminAuth');            if (savedAuth === 'true') {                isAdmin = true;                document.getElementById('adminBadge').classList.remove('hidden');                document.getElementById('loginContainer').style.display = 'none';            }            // Cargar lista de cursos            await cargarCursos();        };        // ===========================================        // FUNCIONES DE AUTENTICACIÓN        // ===========================================                /**         * Abrir modal de login manualmente         */        function openLogin() {            document.getElementById('loginOverlay').classList.remove('hidden');            document.getElementById('adminUser').value = '';            document.getElementById('adminPass').value = '';            document.getElementById('loginError').style.display = 'none';        }        /**         * Cerrar modal de login sin autenticar         */        function closeLogin() {            document.getElementById('loginOverlay').classList.add('hidden');        }        /**         * Iniciar sesión como administrador         * Credenciales: admin / admin         */        function login() {            const user = document.getElementById('adminUser').value.trim();            const pass = document.getElementById('adminPass').value.trim();            if (user === 'admin' && pass === 'admin') {                isAdmin = true;                localStorage.setItem('ceanAdminAuth', 'true');                document.getElementById('loginOverlay').classList.add('hidden');                document.getElementById('adminBadge').classList.remove('hidden');                document.getElementById('loginContainer').style.display = 'none';                document.getElementById('loginError').style.display = 'none';                                // Limpiar campos                document.getElementById('adminUser').value = '';                document.getElementById('adminPass').value = '';                                // Cargar datos                cargarCursos();                cargarCertificados();            } else {                document.getElementById('loginError').style.display = 'block';            }        }        /**         * Cerrar sesión de administrador         */        function logout() {            isAdmin = false;            localStorage.removeItem('ceanAdminAuth');            document.getElementById('adminBadge').classList.add('hidden');            document.getElementById('loginContainer').style.display = 'block';            switchTab('verificar');        }        // ===========================================        // NAVEGACIÓN ENTRE PESTAÑAS        // ===========================================                /**         * Cambiar entre pestañas de la interfaz         * @param {string} tab - Nombre de la pestaña ('verificar', 'generar', 'buscar')         */        function switchTab(tab) {            // Remover clase active de todos los elementos            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));            // Activar la pestaña seleccionada            const tabButton = document.querySelector(`.tab[onclick="switchTab('${tab}')"]`);            const tabContent = document.getElementById(`tab-${tab}`);                        if (tabButton) tabButton.classList.add('active');            if (tabContent) tabContent.classList.add('active');            // Cargar datos según la pestaña            if (tab === 'buscar') cargarCertificados();            if (tab === 'generar') cargarCursos();        }        /**         * Verificar autenticación antes de abrir pestañas de admin         * @param {string} tab - Nombre de la pestaña a abrir         */        function checkAuthAndOpen(tab) {            if (!isAdmin) {                openLogin();            } else {                switchTab(tab);            }        }        // Permitir Enter en el login        document.addEventListener('keypress', function(e) {            if (e.key === 'Enter' && !document.getElementById('loginOverlay').classList.contains('hidden')) {                login();            }        });        // ===========================================        // CARGA DE DATOS DESDE GOOGLE SHEETS        // ===========================================                /**         * Cargar lista de cursos desde Google Sheets         * Si falla, usa cursos por defecto         */        async function cargarCursos() {            const selectGenerar = document.getElementById('cursoSelect');            const selectBuscar = document.getElementById('searchCurso');            try {                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE_CURSOS}?key=${API_KEY}`;                const response = await fetch(url);                if (!response.ok) throw new Error('Error al cargar cursos');                const data = await response.json();                const rows = data.values || [];                // Procesar datos: [Nombre, Horas, Código]                cursosData = rows.slice(1).map(row => ({                    nombre: row[0] || '',                    horas: row[1] || '',                    codigo: row[2] || row[0]?.toLowerCase().replace(/ /g, '-') || ''                })).filter(c => c.nombre);                if (cursosData.length === 0) throw new Error('No hay cursos');            } catch (error) {                console.log('Usando cursos por defecto');                // Cursos por defecto si falla la carga                cursosData = [                    { nombre: 'Ley SAFCO', horas: '40 horas', codigo: 'ley-safco' },                    { nombre: 'Marketing Digital', horas: '30 horas', codigo: 'marketing-digital' },                    { nombre: 'Excel Avanzado', horas: '20 horas', codigo: 'excel-avanzado' },                    { nombre: 'Python Básico', horas: '40 horas', codigo: 'python-basico' },                    { nombre: 'JavaScript', horas: '35 horas', codigo: 'javascript' },                    { nombre: 'Gestión de Proyectos', horas: '30 horas', codigo: 'gestion-proyectos' },                    { nombre: 'Atención al Cliente', horas: '20 horas', codigo: 'atencion-cliente' },                    { nombre: 'Liderazgo', horas: '25 horas', codigo: 'liderazgo' },                    { nombre: 'Comunicación Efectiva', horas: '20 horas', codigo: 'comunicacion' },                    { nombre: 'Gestión del Tiempo', horas: '15 horas', codigo: 'tiempo' }                ];            }            // Llenar selects con los cursos            selectGenerar.innerHTML = '<option value="">Seleccionar curso...</option>' +                cursosData.map(c => `<option value="${c.codigo}" data-horas="${c.horas}">${c.nombre} (${c.horas})</option>`).join('');            selectBuscar.innerHTML = '<option value="">Todos los cursos</option>' +                cursosData.map(c => `<option value="${c.codigo}">${c.nombre}</option>`).join('');            // El listener se maneja con el onchange en el HTML        }        /**         * Cargar lista de certificados desde Google Sheets         */        async function cargarCertificados() {            const container = document.getElementById('certificadosList');            container.innerHTML = '<p style="color: #666; text-align: center;">Cargando certificados...</p>';            try {                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE_READ}?key=${API_KEY}`;                const response = await fetch(url);                if (!response.ok) throw new Error('Error al cargar certificados');                const data = await response.json();                const rows = data.values || [];                // Procesar datos: [Código, Nombre, Curso, Fecha, Estado]                certificadosData = rows.slice(1).map(row => ({                    codigo: row[0] || '',                    nombre: row[1] || '',                    curso: row[2] || '',                    fecha: row[3] || '',                    estado: row[4] || 'Activo'                })).filter(c => c.codigo);                filtrarCertificados();            } catch (error) {                container.innerHTML = '<p style="color: #666; text-align: center;">No hay certificados registrados aún</p>';            }        }        // ===========================================        // BÚSQUEDA Y FILTRADO DE CERTIFICADOS        // ===========================================                /**         * Buscar curso por texto en el buscador específico         */        function buscarCursoPorTexto() {            const texto = document.getElementById('searchCursoTexto').value.toLowerCase();            const selectCurso = document.getElementById('searchCurso');                        if (!texto) {                selectCurso.value = '';                filtrarCertificados();                return;            }                        // Buscar el curso que coincida con el texto            const cursoEncontrado = cursosData.find(c =>                 c.nombre.toLowerCase().includes(texto) ||                 c.codigo.toLowerCase().includes(texto)            );                        if (cursoEncontrado) {                selectCurso.value = cursoEncontrado.codigo;                filtrarCertificados();            }        }        /**         * Buscar curso para generar certificado         */        function buscarCursoParaGenerar() {            const texto = document.getElementById('searchCursoGenerar').value.toLowerCase();            const selectCurso = document.getElementById('cursoSelect');                        if (!texto) {                selectCurso.value = '';                actualizarHorasCurso();                return;            }                        // Buscar el curso que coincida con el texto            const cursoEncontrado = cursosData.find(c =>                 c.nombre.toLowerCase().includes(texto) ||                 c.codigo.toLowerCase().includes(texto)            );                        if (cursoEncontrado) {                selectCurso.value = cursoEncontrado.codigo;                actualizarHorasCurso();            }        }        /**         * Actualizar horas del curso seleccionado         */        function actualizarHorasCurso() {            const select = document.getElementById('cursoSelect');            const selected = select.options[select.selectedIndex];            const horas = selected.getAttribute('data-horas') || '';            document.getElementById('horasCurso').value = horas;        }        /**         * Filtrar certificados por nombre, curso o código         */        function filtrarCertificados() {            const searchNombre = document.getElementById('searchNombre').value.toLowerCase();            const searchCurso = document.getElementById('searchCurso').value;            const searchCodigo = document.getElementById('searchCodigo').value.toLowerCase();            // Aplicar filtros            const filtrados = certificadosData.filter(cert => {                const matchNombre = !searchNombre || cert.nombre.toLowerCase().includes(searchNombre);                const matchCurso = !searchCurso || cert.curso === searchCurso;                const matchCodigo = !searchCodigo || cert.codigo.toLowerCase().includes(searchCodigo);                return matchNombre && matchCurso && matchCodigo;            });            const container = document.getElementById('certificadosList');            if (filtrados.length === 0) {                container.innerHTML = certificadosData.length === 0                    ? '<p style="color: #666; text-align: center;">No hay certificados registrados</p>'                    : '<p style="color: #666; text-align: center;">No se encontraron certificados</p>';                return;            }            // Mostrar resultados            container.innerHTML = filtrados.map(cert => `                <div class="cert-item" onclick="mostrarCertificado('${cert.codigo}')">                    <div class="cert-item-header">                        <span class="cert-item-name">${cert.nombre}</span>                        <span class="cert-item-curso">${cert.curso}</span>                    </div>                    <div class="cert-item-info">                        <svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>                            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                        </svg>                        ${cert.fecha} |                        <svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin: 0 4px;" viewBox="0 0 24 24">                            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" fill="none"/>                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/>                        </svg>                        ${cert.codigo} |                        ${cert.estado === 'Activo'                             ? '<svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; color: #28a745;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" fill="none"/><path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'                            : '<svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; color: #ffc107;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'                        }                        ${cert.estado}                    </div>                    <div class="cert-item-actions">                        <button class="btn-view-qr" onclick="event.stopPropagation(); verQRModal('${cert.codigo}', '${cert.nombre}')">                            <svg class="icon" style="margin-right: 4px;" viewBox="0 0 24 24">                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" fill="none"/>                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>                            </svg>                            Ver QR                        </button>                        <button class="btn-link" onclick="event.stopPropagation(); copiarLink('${cert.codigo}')">                            <svg class="icon" style="margin-right: 4px;" viewBox="0 0 24 24">                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" fill="none"/>                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" fill="none"/>                            </svg>                            Link                        </button>                    </div>                </div>            `).join('');        }        // ===========================================        // FUNCIONES DE CERTIFICADOS        // ===========================================                /**         * Mostrar certificado seleccionado con su QR         * @param {string} codigo - Código del certificado         */        function mostrarCertificado(codigo) {            const cert = certificadosData.find(c => c.codigo === codigo);            if (!cert) return;            const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;            const qrResultado = document.getElementById('qrResultado');            qrResultado.className = 'result success';            qrResultado.innerHTML = `                <div class="verified-badge">✅</div>                <h3>Certificado Encontrado</h3>                <div class="certificate-info" style="color: #155724;">                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">                        <span class="info-label">Código:</span>                        <span class="info-value">${cert.codigo}</span>                    </div>                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">                        <span class="info-label">Nombre:</span>                        <span class="info-value">${cert.nombre}</span>                    </div>                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">                        <span class="info-label">Curso:</span>                        <span class="info-value">${cert.curso}</span>                    </div>                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">                        <span class="info-label">Fecha:</span>                        <span class="info-value">${cert.fecha}</span>                    </div>                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">                        <span class="info-label">Estado:</span>                        <span class="info-value">${cert.estado}</span>                    </div>                </div>                <div class="qr-container">                    <div id="qrcode-existente"></div>                </div>                <div class="qr-actions">                    <button onclick="descargarQR()">                        <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">                            <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>                            <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>                        </svg>                        Descargar QR                    </button>                    <button class="btn-secondary" onclick="imprimirCertificado()">                        <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">                            <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke-linecap="round" stroke-linejoin="round"/>                            <path d="M6 14h12v8H6z" fill="currentColor" stroke="none"/>                        </svg>                        Imprimir                    </button>                </div>                <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">                    Enlace: <a href="${verifyLink}" target="_blank" style="color: #155724;">${verifyLink}</a>                </p>            `;            // Generar QR después de un pequeño delay            setTimeout(() => {                document.getElementById('qrcode-existente').innerHTML = '';                new QRCode(document.getElementById("qrcode-existente"), {                    text: verifyLink,                    width: 200,                    height: 200,                    colorDark: "#000000",                    colorLight: "#ffffff",                    correctLevel: QRCode.CorrectLevel.H                });            }, 100);            // Cambiar a pestaña generar            switchTab('generar');        }        /**         * Descargar QR de certificado existente         * @param {string} codigo - Código del certificado         * @param {string} nombre - Nombre del alumno         */        function descargarQRExistente(codigo, nombre) {            const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;                        // Crear contenedor temporal            const tempDiv = document.createElement('div');            tempDiv.style.position = 'fixed';            tempDiv.style.left = '-9999px';            document.body.appendChild(tempDiv);            // Generar QR temporal            new QRCode(tempDiv, {                text: verifyLink,                width: 200,                height: 200,                colorDark: "#000000",                colorLight: "#ffffff",                correctLevel: QRCode.CorrectLevel.H            });            // Descargar después de generar            setTimeout(() => {                const canvas = tempDiv.querySelector('canvas');                if (canvas) {                    const link = document.createElement('a');                    link.download = `QR-${nombre.replace(/ /g, '_')}-${codigo}.png`;                    link.href = canvas.toDataURL('image/png');                    link.click();                }                document.body.removeChild(tempDiv);            }, 500);        }        /**         * Copiar enlace de verificación al portapapeles         * @param {string} codigo - Código del certificado         */        function copiarLink(codigo) {            const link = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;            navigator.clipboard.writeText(link).then(() => {                alert('✅ Link copiado al portapapeles');            }).catch(() => {                prompt('Copia este link:', link);            });        }        // ===========================================        // FUNCIONES DEL MODAL QR        // ===========================================                /**         * Mostrar modal con vista previa del QR         * @param {string} codigo - Código del certificado         * @param {string} nombre - Nombre del alumno         */        function verQRModal(codigo, nombre) {            const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;                        // Limpiar contenido anterior            document.getElementById('qrModalContent').innerHTML = '';            document.getElementById('qrModalNombre').textContent = nombre;                        // Mostrar modal            document.getElementById('qrModalOverlay').classList.remove('hidden');                        // Generar QR después de un pequeño delay            setTimeout(() => {                new QRCode(document.getElementById("qrModalContent"), {                    text: verifyLink,                    width: 200,                    height: 200,                    colorDark: "#000000",                    colorLight: "#ffffff",                    correctLevel: QRCode.CorrectLevel.H                });            }, 100);        }        /**         * Cerrar modal QR         */        function closeQRModal() {            document.getElementById('qrModalOverlay').classList.add('hidden');            document.getElementById('qrModalContent').innerHTML = '';        }        /**         * Descargar QR desde el modal         */        function descargarQRModal() {            const canvas = document.querySelector('#qrModalContent canvas');            if (canvas) {                const link = document.createElement('a');                link.download = 'QR-Certificado.png';                link.href = canvas.toDataURL('image/png');                link.click();            }        }        // Icono SVG de descargar (reutilizable)        const downloadIcon = `            <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">                <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>                <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>            </svg>        `;        // Cerrar modal con tecla Escape        document.addEventListener('keydown', function(e) {            if (e.key === 'Escape') {                closeQRModal();            }        });        /**         * Generar código único para certificado         * Formato: CERT-TIMESTAMP-RANDOM (ej: CERT-M5K8ABC-X1Y2)         */        function generarCodigoUnico() {            const timestamp = Date.now().toString(36).toUpperCase();            const random = Math.random().toString(36).substring(2, 6).toUpperCase();            return `CERT-${timestamp}-${random}`;        }        // ===========================================        // VERIFICAR CERTIFICADO (FUNCIÓN PÚBLICA)        // ===========================================                /**         * Verificar si un certificado existe en la base de datos         */        async function verificarCertificado() {            const codigo = document.getElementById('codigoInput').value.trim();            const resultado = document.getElementById('resultado');            const btn = document.getElementById('btnVerificar');            if (!codigo) {                resultado.className = 'result error';                resultado.innerHTML = '<div class="verified-badge">❌</div><p>Ingresa un código de certificado</p>';                return;            }            // Mostrar estado de carga            resultado.className = 'result loading';            resultado.innerHTML = '<div class="verified-badge">⏳</div><p>Verificando...</p>';            btn.disabled = true;            try {                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE_READ}?key=${API_KEY}`;                const response = await fetch(url);                if (!response.ok) throw new Error('Error de conexión');                const data = await response.json();                const rows = data.values || [];                                // Buscar certificado por código                const certificado = rows.find(row =>                     row[0] && row[0].toString().trim() === codigo                );                if (certificado && certificado.length > 0) {                    // Certificado encontrado                    const nombre = certificado[1] || 'N/A';                    const curso = certificado[2] || 'N/A';                    const fecha = certificado[3] || 'N/A';                    const estado = certificado[4] || 'Activo';                                        resultado.className = 'result success';                    resultado.innerHTML = `                        <div class="verified-badge">                            <svg class="check-verified" viewBox="0 0 24 24" fill="currentColor">                                <path fill-rule="evenodd" d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z" clip-rule="evenodd"/>                            </svg>                        </div>                        <h3 style="color: white; margin-bottom: 5px;">¡Certificado Verificado!</h3>                        <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 20px;">                            Este es un certificado oficial emitido por el <strong>Instituto CEAN Capacitación</strong>                        </p>                                                <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; margin-top: 15px;">                            <p style="color: white; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">                                <svg class="icon" style="margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24">                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" fill="none"/>                                    <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                                </svg>                                El dueño del certificado es:                            </p>                            <h2 style="color: white; font-size: 24px; margin-bottom: 20px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">                                <svg class="icon-lg" style="margin-right: 8px; vertical-align: middle;" viewBox="0 0 24 24">                                    <circle cx="12" cy="8" r="4" fill="currentColor"/>                                    <path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-6-2-6-8-6z" fill="currentColor"/>                                </svg>                                ${nombre}                            </h2>                                                        <div style="text-align: left; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px;">                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="currentColor" stroke-width="2" fill="none"/>                                            <path d="M6 12v5c3 3 9 3 12 0v-5" stroke="currentColor" stroke-width="2" fill="none"/>                                        </svg>                                        Curso:                                    </span>                                    <span class="info-value" style="color: white;">${curso}</span>                                </div>                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>                                            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>                                        </svg>                                        Fecha de Emisión:                                    </span>                                    <span class="info-value" style="color: white;">${fecha}</span>                                </div>                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                                            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" fill="none"/>                                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/>                                        </svg>                                        Código:                                    </span>                                    <span class="info-value" style="color: white;">${codigo}</span>                                </div>                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" fill="none"/>                                            <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>                                        </svg>                                        Estado:                                    </span>                                    <span class="info-value" style="color: white;">${estado}</span>                                </div>                            </div>                        </div>                                                <p style="color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 15px;">                            <svg class="icon" style="margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24">                                <path d="M3 21h18v-8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8z" stroke="currentColor" stroke-width="2" fill="none"/>                                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>                            </svg>                            Instituto CEAN Capacitación - Autenticidad Verificada                        </p>                    `;                } else {                    // Certificado no encontrado                    resultado.className = 'result error';                    resultado.innerHTML = `                        <div class="verified-badge">❌</div>                        <h3>No Encontrado</h3>                        <p>El código <strong>${codigo}</strong> no está registrado.</p>                    `;                }            } catch (error) {                resultado.className = 'result error';                resultado.innerHTML = `                    <div class="verified-badge">⚠️</div>                    <h3>Error</h3>                    <p>${error.message}</p>                `;            } finally {                btn.disabled = false;            }        }        // ===========================================        // GENERAR CERTIFICADO (FUNCIÓN DE ADMIN)        // ===========================================                /**         * Generar nuevo certificado con QR y guardar en Google Sheets         */        async function generarCertificado() {            const nombre = document.getElementById('nombreAlumno').value.trim();            const curso = document.getElementById('cursoSelect').value;            const fecha = document.getElementById('fechaEmision').value;            const estado = document.getElementById('estadoCertificado').value;            const qrResultado = document.getElementById('qrResultado');            const successMessage = document.getElementById('successMessage');            const btn = document.getElementById('btnGenerar');            // Validaciones            if (!nombre) { alert('Ingresa el nombre del alumno'); return; }            if (!curso) { alert('Selecciona un curso'); return; }            if (!fecha) { alert('Selecciona la fecha'); return; }            // Mostrar estado de carga            btn.disabled = true;            qrResultado.className = 'result loading';            qrResultado.innerHTML = '<div class="verified-badge">⏳</div><p>Generando...</p>';            successMessage.style.display = 'none';            try {                const codigo = generarCodigoUnico();                const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;                // Guardar en Google Sheets                await guardarEnGoogleSheets(codigo, nombre, curso, fecha, estado);                // Recargar lista de certificados                await cargarCertificados();                // Mostrar resultado exitoso                qrResultado.className = 'result success';                qrResultado.innerHTML = `                    <div class="verified-badge">✅</div>                    <h3>¡Certificado Generado!</h3>                    <div class="certificate-info" style="color: #155724;">                        <div class="info-row" style="border-color: rgba(0,0,0,0.1);">                            <span class="info-label">Código:</span>                            <span class="info-value">${codigo}</span>                        </div>                        <div class="info-row" style="border-color: rgba(0,0,0,0.1);">                            <span class="info-label">Nombre:</span>                            <span class="info-value">${nombre}</span>                        </div>                        <div class="info-row" style="border-color: rgba(0,0,0,0.1);">                            <span class="info-label">Curso:</span>                            <span class="info-value">${curso}</span>                        </div>                    </div>                    <div class="qr-container">                        <div id="qrcode"></div>                    </div>                    <div class="qr-actions">                        <button onclick="descargarQR()">                            <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">                                <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>                                <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>                            </svg>                            Descargar QR                        </button>                        <button class="btn-secondary" onclick="imprimirCertificado()">                            <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">                                <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke-linecap="round" stroke-linejoin="round"/>                                <path d="M6 14h12v8H6z" fill="currentColor" stroke="none"/>                            </svg>                            Imprimir                        </button>                    </div>                    <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">                        Link: <a href="${verifyLink}" target="_blank" style="color: white;">${verifyLink}</a>                    </p>                `;                // Generar código QR                new QRCode(document.getElementById("qrcode"), {                    text: verifyLink,                    width: 200,                    height: 200,                    colorDark: "#000000",                    colorLight: "#ffffff",                    correctLevel: QRCode.CorrectLevel.H                });                successMessage.style.display = 'block';                successMessage.innerHTML = '✅ Guardado en la base de datos';                // Limpiar formulario                document.getElementById('nombreAlumno').value = '';                document.getElementById('cursoSelect').value = '';                document.getElementById('estadoCertificado').value = 'Activo';                document.getElementById('horasCurso').value = '';            } catch (error) {                qrResultado.className = 'result error';                qrResultado.innerHTML = `                    <div class="verified-badge">⚠️</div>                    <h3>Error</h3>                    <p>${error.message}</p>                `;            } finally {                btn.disabled = false;            }        }        /**         * Guardar certificado en Google Sheets vía Apps Script         */        async function guardarEnGoogleSheets(codigo, nombre, curso, fecha, estado) {            await fetch(APPS_SCRIPT_URL, {                method: 'POST',                mode: 'no-cors',                headers: { 'Content-Type': 'application/json' },                body: JSON.stringify({ codigo, nombre, curso, fecha, estado })            });        }        // ===========================================        // FUNCIONES UTILITARIAS        // ===========================================                /**         * Descargar QR como imagen PNG         */        function descargarQR() {            const canvas = document.querySelector('#qrcode canvas') ||                           document.querySelector('#qrcode-existente canvas');            if (canvas) {                const link = document.createElement('a');                link.download = 'QR-Certificado.png';                link.href = canvas.toDataURL('image/png');                link.click();            }        }        /**         * Imprimir certificado         */        function imprimirCertificado() {            window.print();        }        // Permitir Enter para verificar certificado        document.getElementById('codigoInput').addEventListener('keypress', function(e) {            if (e.key === 'Enter') {                verificarCertificado();            }        });    </script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador de Certificados - CEAN Capacitación</title>
+    
+    <!-- Librería para generar códigos QR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- ===========================================
+         ESTILOS CSS - DISEÑO DEL SISTEMA
+         =========================================== -->
+    <link rel="stylesheet" href="responsive.css" />\n    <style>
+        /* ===========================================
+           ICONOS SVG - LIBRERÍA DE ICONOS
+           =========================================== */
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+        
+        .icon-lg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .icon-xl {
+            width: 32px;
+            height: 32px;
+        }
+
+        /* ===========================================
+           RESET Y ESTILOS GENERALES
+           =========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* ===========================================
+           CONTENEDOR PRINCIPAL
+           =========================================== */
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        /* Logo dorado del CEAN */
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
+        }
+
+        /* Título principal */
+        h1 {
+            color: #1a1a2e;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        /* Subtítulo */
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        /* ===========================================
+           PESTAÑAS DE NAVEGACIÓN
+           =========================================== */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        /* Pestaña activa (dorada) */
+        .tab.active {
+            background: #d4af37;
+            color: white;
+        }
+
+        /* Contenido de pestañas */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ===========================================
+           CAJAS DE BÚSQUEDA Y FORMULARIOS
+           =========================================== */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        /* Botones dorados */
+        .search-box button, .form-box button {
+            padding: 15px 25px;
+            background: #d4af37;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-box button:hover, .form-box button:hover {
+            background: #b8941f;
+        }
+
+        .search-box button:disabled, .form-box button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* ===========================================
+           FORMULARIO DE GENERACIÓN
+           =========================================== */
+        .form-box {
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        /* ===========================================
+           RESULTADOS (VERIFICACIÓN/GENERACIÓN)
+           =========================================== */
+        .result {
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 15px;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        /* Resultado exitoso (dorado) */
+        .result.success {
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+            color: white;
+            display: block;
+        }
+
+        /* Resultado error (rojo) */
+        .result.error {
+            background: #ffe6e6;
+            color: #cc0000;
+            display: block;
+        }
+
+        /* Resultado cargando (gris) */
+        .result.loading {
+            background: #f0f0f0;
+            color: #666;
+            display: block;
+        }
+
+        /* Animación de entrada */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .verified-badge {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        /* Animación del check de verificación */
+        .check-verified {
+            width: 50px;
+            height: 50px;
+            color: #4ade80;
+            animation: checkBounce 0.6s ease, checkPulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 60px rgba(74, 222, 128, 0.3));
+        }
+
+        @keyframes checkBounce {
+            0% {
+                transform: scale(0) rotate(-45deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(5deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes checkPulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 60px rgba(74, 222, 128, 0.3));
+                transform: scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1)) drop-shadow(0 0 60px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 80px rgba(74, 222, 128, 0.5));
+                transform: scale(1.05);
+            }
+        }
+
+        .certificate-info {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .certificate-info h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            padding-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: bold;
+            opacity: 0.9;
+        }
+
+        .info-value {
+            opacity: 0.95;
+        }
+
+        /* ===========================================
+           MENSAJES E INDICACIONES
+           =========================================== */
+        .scan-hint {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .scan-hint strong {
+            color: #d4af37;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* ===========================================
+           CÓDIGO QR Y ACCIONES
+           =========================================== */
+        .qr-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .qr-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .qr-actions button {
+            padding: 10px 20px;
+            font-size: 13px;
+        }
+
+        .btn-secondary {
+            background: #6c757d !important;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268 !important;
+        }
+
+        /* ===========================================
+           LOGIN DE ADMINISTRADOR
+           =========================================== */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(26,26,46,0.95) 0%, rgba(22,33,62,0.95) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            padding: 0;
+            max-width: 420px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.4);
+            overflow: hidden;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header dorado del login */
+        .login-header {
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .login-header .logo { width: 140px; height: 140px; margin: 0 auto 15px; display: block; filter: drop-shadow(0 0 30px rgba(255,255,255,1)) drop-shadow(0 0 60px rgba(255,255,255,0.9)) drop-shadow(0 0 90px rgba(255,255,255,0.7)) drop-shadow(0 0 120px rgba(255,255,255,0.5)); }
+
+        .login-header h2 {
+            color: white;
+            font-size: 26px;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .login-header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            margin: 8px 0 0;
+        }
+
+        /* Botón X para cerrar */
+        .login-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            font-size: 22px;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            padding: 0;
+        }
+
+        .login-close:hover {
+            background: white;
+            color: #d4af37;
+            transform: rotate(90deg);
+        }
+
+        /* Cuerpo del formulario */
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px 16px 16px 50px;
+            border: 2px solid #e0e0e0;
+            border-radius: 14px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #d4af37;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .input-wrapper input:focus + .input-icon {
+            color: #d4af37;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 5px 20px rgba(212,175,55,0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212,175,55,0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .login-error {
+            background: #ffe6e6;
+            color: #cc0000;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 14px;
+            display: none;
+            border-left: 4px solid #cc0000;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #999;
+        }
+
+        /* Botón de cerrar sesión */
+        .logout-btn {
+            background: linear-gradient(135deg, #dc3545 0%, #ef4757 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(220,53,69,0.3);
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220,53,69,0.4);
+        }
+
+        /* ===========================================
+           LISTA DE CERTIFICADOS (BUSCADOR)
+           =========================================== */
+        .certificados-list {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .cert-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cert-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .cert-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cert-item-name {
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+
+        .cert-item-curso {
+            color: #d4af37;
+            font-size: 13px;
+        }
+
+        .cert-item-info {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .cert-item-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .cert-item-actions button {
+            padding: 8px 15px;
+            font-size: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        /* Botón Ver QR (dorado) */
+        .btn-view-qr {
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+            color: white;
+        }
+
+        .btn-view-qr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212,175,55,0.3);
+        }
+
+        /* Botón Link (gris) */
+        .btn-link {
+            background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+            color: white;
+        }
+
+        .btn-link:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #6c757d 100%);
+            transform: translateY(-2px);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group input, .filter-group select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        /* ===========================================
+           MODAL PARA VER QR
+           =========================================== */
+        .qr-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .qr-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        .qr-modal h3 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .qr-modal .qr-preview {
+            margin: 20px auto;
+            display: inline-block;
+        }
+
+        .qr-modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .qr-modal-actions button {
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .qr-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .qr-modal-close:hover {
+            background: #d4af37;
+            color: white;
+        }
+
+        /* ===========================================
+           ELEMENTOS OCULTOS Y BADGE ADMIN
+           =========================================== */
+        .hidden {
+            display: none !important;
+        }
+
+        .admin-badge {
+            background: #d4af37;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        /* Botón de acceso admin */
+        .btn-login-access {
+            background: #1a1a2e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-login-access:hover {
+            background: #2a2a4e;
+            transform: translateY(-2px);
+        }
+
+        /* ===========================================
+           ESTILOS DE IMPRESIÓN
+           =========================================== */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .qr-container, .qr-container * {
+                visibility: visible;
+            }
+            .qr-container {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===========================================
+         LOGIN DE ADMINISTRADOR (OVERLAY)
+         =========================================== -->
+    <div id="loginOverlay" class="login-overlay hidden">
+        <div class="login-card">
+            <!-- Header dorado -->
+            <div class="login-header">
+                <button class="login-close" onclick="closeLogin()" title="Cerrar">×</button>
+                <img src="logo-cean.png" alt="CEAN" class="logo" style="width: 140px; height: 140px; object-fit: contain;" />
+                <h2>Acceso Admin</h2>
+                <p>Sistema de Certificados CEAN</p>
+            </div>
+            
+            <!-- Cuerpo del formulario -->
+            <div class="login-body">
+                <div class="input-group">
+                    <label>Usuario</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="adminUser" placeholder="Ingresa tu usuario" autocomplete="off" />
+                        <span class="input-icon">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4" fill="currentColor"/>
+                                <path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-6-2-6-8-6z" fill="currentColor"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Contraseña</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="adminPass" placeholder="Ingresa tu contraseña" autocomplete="off" />
+                        <span class="input-icon">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor" opacity="0.3"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <circle cx="12" cy="16" r="2" fill="currentColor"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                
+                <button class="login-btn" onclick="login()">
+                    <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                    Ingresar al Sistema
+                </button>
+                
+                <div id="loginError" class="login-error">
+                    <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>
+                        <path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Usuario o contraseña incorrectos
+                </div>
+                
+                <div class="login-footer">
+                    <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor" opacity="0.3"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                    Acceso exclusivo para administradores
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         MODAL PARA VER QR (PREVISUALIZACIÓN)
+         =========================================== -->
+    <div id="qrModalOverlay" class="qr-modal-overlay hidden">
+        <div class="qr-modal">
+            <button class="qr-modal-close" onclick="closeQRModal()">×</button>
+            <h3 id="qrModalTitle">Vista Previa del QR</h3>
+            <div class="qr-preview">
+                <div id="qrModalContent"></div>
+            </div>
+            <p id="qrModalNombre" style="color: #666; font-size: 14px; margin-top: 15px;"></p>
+            <div class="qr-modal-actions">
+                <button class="btn-view-qr" onclick="descargarQRModal()">
+                    <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                        <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
+                    </svg>
+                    Descargar
+                </button>
+                <button class="btn-link" onclick="closeQRModal()">
+                    <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         CONTENEDOR PRINCIPAL
+         =========================================== -->
+    <div class="container">
+        <!-- Logo CEAN -->
+        <img src="logo-cean.png" alt="CEAN" class="logo" style="width: 140px; height: 140px; object-fit: contain;" />
+
+        <!-- Título con badge de admin -->
+        <h1>
+            CEAN Capacitación 
+            <span id="adminBadge" class="admin-badge hidden">ADMIN</span>
+        </h1>
+        <p class="subtitle">Sistema de Certificados</p>
+
+        <!-- Botón de Login Admin (visible cuando no está logueado) -->
+        <div id="loginContainer">
+            <button class="btn-login-access" onclick="openLogin()">
+                <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+                Acceso Admin
+            </button>
+        </div>
+
+        <!-- ===========================================
+             PESTAÑAS DE NAVEGACIÓN
+             =========================================== -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('verificar')">
+                <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Verificar
+            </button>
+            <button class="tab" onclick="checkAuthAndOpen('generar')">
+                <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Generar QR
+            </button>
+            <button class="tab" onclick="checkAuthAndOpen('buscar')">
+                <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M11 8v6M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Buscar QR
+            </button>
+        </div>
+
+        <!-- ===========================================
+             PESTAÑA 1: VERIFICAR CERTIFICADO (PÚBLICO)
+             =========================================== -->
+        <div id="tab-verificar" class="tab-content active">
+            <div class="search-box">
+                <input type="text" id="codigoInput" placeholder="Ingresa el código del certificado" />
+                <button onclick="verificarCertificado()" id="btnVerificar">Verificar</button>
+            </div>
+            
+            <!-- Resultado de la verificación -->
+            <div id="resultado" class="result"></div>
+
+            <div class="scan-hint">
+                <strong>📱 ¿Escaneaste un QR?</strong><br>
+                El código se cargará automáticamente. Si no es así, ingrésalo manualmente arriba.
+            </div>
+        </div>
+
+        <!-- ===========================================
+             PESTAÑA 2: GENERAR CERTIFICADO (SOLO ADMIN)
+             =========================================== -->
+        <div id="tab-generar" class="tab-content">
+            <div style="text-align: right; margin-bottom: 10px;">
+                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            </div>
+            
+            <div class="form-box">
+                <div class="form-group">
+                    <label for="nombreAlumno">Nombre del Alumno *</label>
+                    <input type="text" id="nombreAlumno" placeholder="Ej: Juan Pérez García" />
+                </div>
+
+                <div class="form-group">
+                    <label for="cursoSelect">Curso *</label>
+                    <!-- Buscador de cursos -->
+                    <div class="search-box" style="margin-bottom: 10px;">
+                        <input type="text" id="searchCursoGenerar" placeholder="🔎 Buscar curso por nombre..." 
+                               onkeyup="buscarCursoParaGenerar()" />
+                        <button onclick="buscarCursoParaGenerar()" type="button">
+                            <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Buscar
+                        </button>
+                    </div>
+                    <select id="cursoSelect" onchange="actualizarHorasCurso()">
+                        <option value="">Seleccionar curso...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="horasCurso">Horas del Curso</label>
+                    <input type="text" id="horasCurso" placeholder="Ej: 40 horas" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaEmision">Fecha de Emisión *</label>
+                    <input type="date" id="fechaEmision" />
+                </div>
+
+                <div class="form-group">
+                    <label for="estadoCertificado">Estado</label>
+                    <select id="estadoCertificado">
+                        <option value="Activo">Activo</option>
+                        <option value="Suspendido">Suspendido</option>
+                        <option value="Revocado">Revocado</option>
+                    </select>
+                </div>
+
+                <button onclick="generarCertificado()" id="btnGenerar">Generar Certificado</button>
+
+                <!-- Resultado de generación -->
+                <div id="qrResultado" class="result"></div>
+                <div id="successMessage" class="success-message"></div>
+            </div>
+        </div>
+
+        <!-- ===========================================
+             PESTAÑA 3: BUSCAR CERTIFICADO (SOLO ADMIN)
+             =========================================== -->
+        <div id="tab-buscar" class="tab-content">
+            <div style="text-align: right; margin-bottom: 10px;">
+                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            </div>
+            
+            <div class="form-box">
+                <!-- Filtros de búsqueda -->
+                <div class="filter-group">
+                    <input type="text" id="searchNombre" placeholder="Buscar por nombre..." 
+                           onkeyup="filtrarCertificados()" />
+                    <select id="searchCurso" onchange="filtrarCertificados()">
+                        <option value="">Todos los cursos</option>
+                    </select>
+                </div>
+
+                <!-- Buscador de cursos específico -->
+                <div class="search-box" style="margin-bottom: 15px;">
+                    <input type="text" id="searchCursoTexto" placeholder="🔎 Buscar curso por nombre..." 
+                           onkeyup="buscarCursoPorTexto()" />
+                    <button onclick="buscarCursoPorTexto()">
+                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Buscar Curso
+                    </button>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="searchCodigo" placeholder="O busca por código..." 
+                           onkeyup="filtrarCertificados()" />
+                    <button onclick="filtrarCertificados()">
+                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M11 8v6M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Buscar
+                    </button>
+                </div>
+
+                <!-- Lista de resultados -->
+                <div id="certificadosList" class="certificados-list">
+                    <p style="color: #666; text-align: center;">
+                        Cargando certificados...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         LÓGICA JAVASCRIPT
+         =========================================== -->
+    <script>
+        // ===========================================
+        // CONFIGURACIÓN - CONEXIÓN A GOOGLE SHEETS
+        // ===========================================
+        const API_KEY = 'AIzaSyAOhGTjJXHhuUhqf1g2DPCla59xNzftb-Q';
+        const SPREADSHEET_ID = '1zB0M4mq956OrfWzGj7Bo73QeM4bp8QNRRk1tagD78Xw';
+        const RANGE_READ = 'Certificados!A:E';      // Rango para leer certificados
+        const RANGE_CURSOS = 'Cursos!A:C';          // Rango para leer cursos
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLWXUH4IHL8foVJA6L4saLNgVfmllXqqqekNHVhoiw9ocykBzkTIAx1JRkeSOqGAsK8Q/exec';
+        const VERIFY_URL = 'https://gleoleder.github.io/QR_VERIFICABLE/';
+
+        // ===========================================
+        // VARIABLES DE ESTADO
+        // ===========================================
+        let isAdmin = false;              // Estado de autenticación
+        let cursosData = [];              // Lista de cursos
+        let certificadosData = [];        // Lista de certificados
+        let cursosListenerAdded = false;  // Control para evitar múltiples listeners
+
+        // ===========================================
+        // INICIALIZACIÓN AL CARGAR LA PÁGINA
+        // ===========================================
+        window.onload = async function() {
+            // Verificar si hay código en la URL (cuando escanean QR)
+            const urlParams = new URLSearchParams(window.location.search);
+            const codigo = urlParams.get('codigo') || urlParams.get('code') || urlParams.get('cert');
+            
+            if (codigo) {
+                document.getElementById('codigoInput').value = codigo;
+                await verificarCertificado();
+            }
+
+            // Establecer fecha de hoy por defecto en el formulario
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaEmision').value = hoy;
+
+            // Verificar si hay sesión guardada de administrador
+            const savedAuth = localStorage.getItem('ceanAdminAuth');
+            if (savedAuth === 'true') {
+                isAdmin = true;
+                document.getElementById('adminBadge').classList.remove('hidden');
+                document.getElementById('loginContainer').style.display = 'none';
+            }
+
+            // Cargar lista de cursos
+            await cargarCursos();
+        };
+
+        // ===========================================
+        // FUNCIONES DE AUTENTICACIÓN
+        // ===========================================
+        
+        /**
+         * Abrir modal de login manualmente
+         */
+        function openLogin() {
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('adminUser').value = '';
+            document.getElementById('adminPass').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        /**
+         * Cerrar modal de login sin autenticar
+         */
+        function closeLogin() {
+            document.getElementById('loginOverlay').classList.add('hidden');
+        }
+
+        /**
+         * Iniciar sesión como administrador
+         * Credenciales: admin / admin
+         */
+        function login() {
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+
+            if (user === 'admin' && pass === 'admin') {
+                isAdmin = true;
+                localStorage.setItem('ceanAdminAuth', 'true');
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('adminBadge').classList.remove('hidden');
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('loginError').style.display = 'none';
+                
+                // Limpiar campos
+                document.getElementById('adminUser').value = '';
+                document.getElementById('adminPass').value = '';
+                
+                // Cargar datos
+                cargarCursos();
+                cargarCertificados();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        /**
+         * Cerrar sesión de administrador
+         */
+        function logout() {
+            isAdmin = false;
+            localStorage.removeItem('ceanAdminAuth');
+            document.getElementById('adminBadge').classList.add('hidden');
+            document.getElementById('loginContainer').style.display = 'block';
+            switchTab('verificar');
+        }
+
+        // ===========================================
+        // NAVEGACIÓN ENTRE PESTAÑAS
+        // ===========================================
+        
+        /**
+         * Cambiar entre pestañas de la interfaz
+         * @param {string} tab - Nombre de la pestaña ('verificar', 'generar', 'buscar')
+         */
+        function switchTab(tab) {
+            // Remover clase active de todos los elementos
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            // Activar la pestaña seleccionada
+            const tabButton = document.querySelector(`.tab[onclick="switchTab('${tab}')"]`);
+            const tabContent = document.getElementById(`tab-${tab}`);
+            
+            if (tabButton) tabButton.classList.add('active');
+            if (tabContent) tabContent.classList.add('active');
+
+            // Cargar datos según la pestaña
+            if (tab === 'buscar') cargarCertificados();
+            if (tab === 'generar') cargarCursos();
+        }
+
+        /**
+         * Verificar autenticación antes de abrir pestañas de admin
+         * @param {string} tab - Nombre de la pestaña a abrir
+         */
+        function checkAuthAndOpen(tab) {
+            if (!isAdmin) {
+                openLogin();
+            } else {
+                switchTab(tab);
+            }
+        }
+
+        // Permitir Enter en el login
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !document.getElementById('loginOverlay').classList.contains('hidden')) {
+                login();
+            }
+        });
+
+        // ===========================================
+        // CARGA DE DATOS DESDE GOOGLE SHEETS
+        // ===========================================
+        
+        /**
+         * Cargar lista de cursos desde Google Sheets
+         * Si falla, usa cursos por defecto
+         */
+        async function cargarCursos() {
+            const selectGenerar = document.getElementById('cursoSelect');
+            const selectBuscar = document.getElementById('searchCurso');
+
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE_CURSOS}?key=${API_KEY}`;
+                const response = await fetch(url);
+
+                if (!response.ok) throw new Error('Error al cargar cursos');
+
+                const data = await response.json();
+                const rows = data.values || [];
+
+                // Procesar datos: [Nombre, Horas, Código]
+                cursosData = rows.slice(1).map(row => ({
+                    nombre: row[0] || '',
+                    horas: row[1] || '',
+                    codigo: row[2] || row[0]?.toLowerCase().replace(/ /g, '-') || ''
+                })).filter(c => c.nombre);
+
+                if (cursosData.length === 0) throw new Error('No hay cursos');
+
+            } catch (error) {
+                console.log('Usando cursos por defecto');
+                // Cursos por defecto si falla la carga
+                cursosData = [
+                    { nombre: 'Ley SAFCO', horas: '40 horas', codigo: 'ley-safco' },
+                    { nombre: 'Marketing Digital', horas: '30 horas', codigo: 'marketing-digital' },
+                    { nombre: 'Excel Avanzado', horas: '20 horas', codigo: 'excel-avanzado' },
+                    { nombre: 'Python Básico', horas: '40 horas', codigo: 'python-basico' },
+                    { nombre: 'JavaScript', horas: '35 horas', codigo: 'javascript' },
+                    { nombre: 'Gestión de Proyectos', horas: '30 horas', codigo: 'gestion-proyectos' },
+                    { nombre: 'Atención al Cliente', horas: '20 horas', codigo: 'atencion-cliente' },
+                    { nombre: 'Liderazgo', horas: '25 horas', codigo: 'liderazgo' },
+                    { nombre: 'Comunicación Efectiva', horas: '20 horas', codigo: 'comunicacion' },
+                    { nombre: 'Gestión del Tiempo', horas: '15 horas', codigo: 'tiempo' }
+                ];
+            }
+
+            // Llenar selects con los cursos
+            selectGenerar.innerHTML = '<option value="">Seleccionar curso...</option>' +
+                cursosData.map(c => `<option value="${c.codigo}" data-horas="${c.horas}">${c.nombre} (${c.horas})</option>`).join('');
+
+            selectBuscar.innerHTML = '<option value="">Todos los cursos</option>' +
+                cursosData.map(c => `<option value="${c.codigo}">${c.nombre}</option>`).join('');
+
+            // El listener se maneja con el onchange en el HTML
+        }
+
+        /**
+         * Cargar lista de certificados desde Google Sheets
+         */
+        async function cargarCertificados() {
+            const container = document.getElementById('certificadosList');
+            container.innerHTML = '<p style="color: #666; text-align: center;">Cargando certificados...</p>';
+
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE_READ}?key=${API_KEY}`;
+                const response = await fetch(url);
+
+                if (!response.ok) throw new Error('Error al cargar certificados');
+
+                const data = await response.json();
+                const rows = data.values || [];
+
+                // Procesar datos: [Código, Nombre, Curso, Fecha, Estado]
+                certificadosData = rows.slice(1).map(row => ({
+                    codigo: row[0] || '',
+                    nombre: row[1] || '',
+                    curso: row[2] || '',
+                    fecha: row[3] || '',
+                    estado: row[4] || 'Activo'
+                })).filter(c => c.codigo);
+
+                filtrarCertificados();
+
+            } catch (error) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">No hay certificados registrados aún</p>';
+            }
+        }
+
+        // ===========================================
+        // BÚSQUEDA Y FILTRADO DE CERTIFICADOS
+        // ===========================================
+        
+        /**
+         * Buscar curso por texto en el buscador específico
+         */
+        function buscarCursoPorTexto() {
+            const texto = document.getElementById('searchCursoTexto').value.toLowerCase();
+            const selectCurso = document.getElementById('searchCurso');
+            
+            if (!texto) {
+                selectCurso.value = '';
+                filtrarCertificados();
+                return;
+            }
+            
+            // Buscar el curso que coincida con el texto
+            const cursoEncontrado = cursosData.find(c => 
+                c.nombre.toLowerCase().includes(texto) || 
+                c.codigo.toLowerCase().includes(texto)
+            );
+            
+            if (cursoEncontrado) {
+                selectCurso.value = cursoEncontrado.codigo;
+                filtrarCertificados();
+            }
+        }
+
+        /**
+         * Buscar curso para generar certificado
+         */
+        function buscarCursoParaGenerar() {
+            const texto = document.getElementById('searchCursoGenerar').value.toLowerCase();
+            const selectCurso = document.getElementById('cursoSelect');
+            
+            if (!texto) {
+                selectCurso.value = '';
+                actualizarHorasCurso();
+                return;
+            }
+            
+            // Buscar el curso que coincida con el texto
+            const cursoEncontrado = cursosData.find(c => 
+                c.nombre.toLowerCase().includes(texto) || 
+                c.codigo.toLowerCase().includes(texto)
+            );
+            
+            if (cursoEncontrado) {
+                selectCurso.value = cursoEncontrado.codigo;
+                actualizarHorasCurso();
+            }
+        }
+
+        /**
+         * Actualizar horas del curso seleccionado
+         */
+        function actualizarHorasCurso() {
+            const select = document.getElementById('cursoSelect');
+            const selected = select.options[select.selectedIndex];
+            const horas = selected.getAttribute('data-horas') || '';
+            document.getElementById('horasCurso').value = horas;
+        }
+
+        /**
+         * Filtrar certificados por nombre, curso o código
+         */
+        function filtrarCertificados() {
+            const searchNombre = document.getElementById('searchNombre').value.toLowerCase();
+            const searchCurso = document.getElementById('searchCurso').value;
+            const searchCodigo = document.getElementById('searchCodigo').value.toLowerCase();
+
+            // Aplicar filtros
+            const filtrados = certificadosData.filter(cert => {
+                const matchNombre = !searchNombre || cert.nombre.toLowerCase().includes(searchNombre);
+                const matchCurso = !searchCurso || cert.curso === searchCurso;
+                const matchCodigo = !searchCodigo || cert.codigo.toLowerCase().includes(searchCodigo);
+                return matchNombre && matchCurso && matchCodigo;
+            });
+
+            const container = document.getElementById('certificadosList');
+
+            if (filtrados.length === 0) {
+                container.innerHTML = certificadosData.length === 0
+                    ? '<p style="color: #666; text-align: center;">No hay certificados registrados</p>'
+                    : '<p style="color: #666; text-align: center;">No se encontraron certificados</p>';
+                return;
+            }
+
+            // Mostrar resultados
+            container.innerHTML = filtrados.map(cert => `
+                <div class="cert-item" onclick="mostrarCertificado('${cert.codigo}')">
+                    <div class="cert-item-header">
+                        <span class="cert-item-name">${cert.nombre}</span>
+                        <span class="cert-item-curso">${cert.curso}</span>
+                    </div>
+                    <div class="cert-item-info">
+                        <svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        ${cert.fecha} |
+                        <svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin: 0 4px;" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                        ${cert.codigo} |
+                        ${cert.estado === 'Activo' 
+                            ? '<svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; color: #28a745;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" fill="none"/><path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                            : '<svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; color: #ffc107;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+                        }
+                        ${cert.estado}
+                    </div>
+                    <div class="cert-item-actions">
+                        <button class="btn-view-qr" onclick="event.stopPropagation(); verQRModal('${cert.codigo}', '${cert.nombre}')">
+                            <svg class="icon" style="margin-right: 4px;" viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                            Ver QR
+                        </button>
+                        <button class="btn-link" onclick="event.stopPropagation(); copiarLink('${cert.codigo}')">
+                            <svg class="icon" style="margin-right: 4px;" viewBox="0 0 24 24">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                            Link
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===========================================
+        // FUNCIONES DE CERTIFICADOS
+        // ===========================================
+        
+        /**
+         * Mostrar certificado seleccionado con su QR
+         * @param {string} codigo - Código del certificado
+         */
+        function mostrarCertificado(codigo) {
+            const cert = certificadosData.find(c => c.codigo === codigo);
+            if (!cert) return;
+
+            const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
+            const qrResultado = document.getElementById('qrResultado');
+
+            qrResultado.className = 'result success';
+            qrResultado.innerHTML = `
+                <div class="verified-badge">✅</div>
+                <h3>Certificado Encontrado</h3>
+                <div class="certificate-info" style="color: #155724;">
+                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">
+                        <span class="info-label">Código:</span>
+                        <span class="info-value">${cert.codigo}</span>
+                    </div>
+                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">
+                        <span class="info-label">Nombre:</span>
+                        <span class="info-value">${cert.nombre}</span>
+                    </div>
+                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">
+                        <span class="info-label">Curso:</span>
+                        <span class="info-value">${cert.curso}</span>
+                    </div>
+                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">
+                        <span class="info-label">Fecha:</span>
+                        <span class="info-value">${cert.fecha}</span>
+                    </div>
+                    <div class="info-row" style="border-color: rgba(0,0,0,0.1); color: #333;">
+                        <span class="info-label">Estado:</span>
+                        <span class="info-value">${cert.estado}</span>
+                    </div>
+                </div>
+                <div class="qr-container">
+                    <div id="qrcode-existente"></div>
+                </div>
+                <div class="qr-actions">
+                    <button onclick="descargarQR()">
+                        <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
+                        </svg>
+                        Descargar QR
+                    </button>
+                    <button class="btn-secondary" onclick="imprimirCertificado()">
+                        <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 14h12v8H6z" fill="currentColor" stroke="none"/>
+                        </svg>
+                        Imprimir
+                    </button>
+                </div>
+                <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
+                    Enlace: <a href="${verifyLink}" target="_blank" style="color: #155724;">${verifyLink}</a>
+                </p>
+            `;
+
+            // Generar QR después de un pequeño delay
+            setTimeout(() => {
+                document.getElementById('qrcode-existente').innerHTML = '';
+                new QRCode(document.getElementById("qrcode-existente"), {
+                    text: verifyLink,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }, 100);
+
+            // Cambiar a pestaña generar
+            switchTab('generar');
+        }
+
+        /**
+         * Descargar QR de certificado existente
+         * @param {string} codigo - Código del certificado
+         * @param {string} nombre - Nombre del alumno
+         */
+        function descargarQRExistente(codigo, nombre) {
+            const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
+            
+            // Crear contenedor temporal
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'fixed';
+            tempDiv.style.left = '-9999px';
+            document.body.appendChild(tempDiv);
+
+            // Generar QR temporal
+            new QRCode(tempDiv, {
+                text: verifyLink,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Descargar después de generar
+            setTimeout(() => {
+                const canvas = tempDiv.querySelector('canvas');
+                if (canvas) {
+                    const link = document.createElement('a');
+                    link.download = `QR-${nombre.replace(/ /g, '_')}-${codigo}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }
+                document.body.removeChild(tempDiv);
+            }, 500);
+        }
+
+        /**
+         * Copiar enlace de verificación al portapapeles
+         * @param {string} codigo - Código del certificado
+         */
+        function copiarLink(codigo) {
+            const link = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('✅ Link copiado al portapapeles');
+            }).catch(() => {
+                prompt('Copia este link:', link);
+            });
+        }
+
+        // ===========================================
+        // FUNCIONES DEL MODAL QR
+        // ===========================================
+        
+        /**
+         * Mostrar modal con vista previa del QR
+         * @param {string} codigo - Código del certificado
+         * @param {string} nombre - Nombre del alumno
+         */
+        function verQRModal(codigo, nombre) {
+            const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
+            
+            // Limpiar contenido anterior
+            document.getElementById('qrModalContent').innerHTML = '';
+            document.getElementById('qrModalNombre').textContent = nombre;
+            
+            // Mostrar modal
+            document.getElementById('qrModalOverlay').classList.remove('hidden');
+            
+            // Generar QR después de un pequeño delay
+            setTimeout(() => {
+                new QRCode(document.getElementById("qrModalContent"), {
+                    text: verifyLink,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }, 100);
+        }
+
+        /**
+         * Cerrar modal QR
+         */
+        function closeQRModal() {
+            document.getElementById('qrModalOverlay').classList.add('hidden');
+            document.getElementById('qrModalContent').innerHTML = '';
+        }
+
+        /**
+         * Descargar QR desde el modal
+         */
+        function descargarQRModal() {
+            const canvas = document.querySelector('#qrModalContent canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = 'QR-Certificado.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        }
+
+        // Icono SVG de descargar (reutilizable)
+        const downloadIcon = `
+            <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
+            </svg>
+        `;
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeQRModal();
+            }
+        });
+
+        /**
+         * Generar código único para certificado
+         * Formato: CERT-TIMESTAMP-RANDOM (ej: CERT-M5K8ABC-X1Y2)
+         */
+        function generarCodigoUnico() {
+            const timestamp = Date.now().toString(36).toUpperCase();
+            const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+            return `CERT-${timestamp}-${random}`;
+        }
+
+        // ===========================================
+        // VERIFICAR CERTIFICADO (FUNCIÓN PÚBLICA)
+        // ===========================================
+        
+        /**
+         * Verificar si un certificado existe en la base de datos
+         */
+        async function verificarCertificado() {
+            const codigo = document.getElementById('codigoInput').value.trim();
+            const resultado = document.getElementById('resultado');
+            const btn = document.getElementById('btnVerificar');
+
+            if (!codigo) {
+                resultado.className = 'result error';
+                resultado.innerHTML = '<div class="verified-badge">❌</div><p>Ingresa un código de certificado</p>';
+                return;
+            }
+
+            // Mostrar estado de carga
+            resultado.className = 'result loading';
+            resultado.innerHTML = '<div class="verified-badge">⏳</div><p>Verificando...</p>';
+            btn.disabled = true;
+
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE_READ}?key=${API_KEY}`;
+                const response = await fetch(url);
+
+                if (!response.ok) throw new Error('Error de conexión');
+
+                const data = await response.json();
+                const rows = data.values || [];
+                
+                // Buscar certificado por código
+                const certificado = rows.find(row => 
+                    row[0] && row[0].toString().trim() === codigo
+                );
+
+                if (certificado && certificado.length > 0) {
+                    // Certificado encontrado
+                    const nombre = certificado[1] || 'N/A';
+                    const curso = certificado[2] || 'N/A';
+                    const fecha = certificado[3] || 'N/A';
+                    const estado = certificado[4] || 'Activo';
+                    
+                    resultado.className = 'result success';
+                    resultado.innerHTML = `
+                        <div class="verified-badge">
+                            <svg class="check-verified" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <h3 style="color: white; margin-bottom: 5px;">¡Certificado Verificado!</h3>
+                        <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 20px;">
+                            Este es un certificado oficial emitido por el <strong>Instituto CEAN Capacitación</strong>
+                        </p>
+                        
+                        <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; margin-top: 15px;">
+                            <p style="color: white; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
+                                <svg class="icon" style="margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                El dueño del certificado es:
+                            </p>
+                            <h2 style="color: white; font-size: 24px; margin-bottom: 20px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                                <svg class="icon-lg" style="margin-right: 8px; vertical-align: middle;" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="8" r="4" fill="currentColor"/>
+                                    <path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-6-2-6-8-6z" fill="currentColor"/>
+                                </svg>
+                                ${nombre}
+                            </h2>
+                            
+                            <div style="text-align: left; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px;">
+                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">
+                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            <path d="M6 12v5c3 3 9 3 12 0v-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                        </svg>
+                                        Curso:
+                                    </span>
+                                    <span class="info-value" style="color: white;">${curso}</span>
+                                </div>
+                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">
+                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                        Fecha de Emisión:
+                                    </span>
+                                    <span class="info-value" style="color: white;">${fecha}</span>
+                                </div>
+                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">
+                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                        </svg>
+                                        Código:
+                                    </span>
+                                    <span class="info-value" style="color: white;">${codigo}</span>
+                                </div>
+                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">
+                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Estado:
+                                    </span>
+                                    <span class="info-value" style="color: white;">${estado}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p style="color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 15px;">
+                            <svg class="icon" style="margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24">
+                                <path d="M3 21h18v-8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                            Instituto CEAN Capacitación - Autenticidad Verificada
+                        </p>
+                    `;
+                } else {
+                    // Certificado no encontrado
+                    resultado.className = 'result error';
+                    resultado.innerHTML = `
+                        <div class="verified-badge">❌</div>
+                        <h3>No Encontrado</h3>
+                        <p>El código <strong>${codigo}</strong> no está registrado.</p>
+                    `;
+                }
+            } catch (error) {
+                resultado.className = 'result error';
+                resultado.innerHTML = `
+                    <div class="verified-badge">⚠️</div>
+                    <h3>Error</h3>
+                    <p>${error.message}</p>
+                `;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // ===========================================
+        // GENERAR CERTIFICADO (FUNCIÓN DE ADMIN)
+        // ===========================================
+        
+        /**
+         * Generar nuevo certificado con QR y guardar en Google Sheets
+         */
+        async function generarCertificado() {
+            const nombre = document.getElementById('nombreAlumno').value.trim();
+            const curso = document.getElementById('cursoSelect').value;
+            const fecha = document.getElementById('fechaEmision').value;
+            const estado = document.getElementById('estadoCertificado').value;
+            const qrResultado = document.getElementById('qrResultado');
+            const successMessage = document.getElementById('successMessage');
+            const btn = document.getElementById('btnGenerar');
+
+            // Validaciones
+            if (!nombre) { alert('Ingresa el nombre del alumno'); return; }
+            if (!curso) { alert('Selecciona un curso'); return; }
+            if (!fecha) { alert('Selecciona la fecha'); return; }
+
+            // Mostrar estado de carga
+            btn.disabled = true;
+            qrResultado.className = 'result loading';
+            qrResultado.innerHTML = '<div class="verified-badge">⏳</div><p>Generando...</p>';
+            successMessage.style.display = 'none';
+
+            try {
+                const codigo = generarCodigoUnico();
+                const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
+
+                // Guardar en Google Sheets
+                await guardarEnGoogleSheets(codigo, nombre, curso, fecha, estado);
+
+                // Recargar lista de certificados
+                await cargarCertificados();
+
+                // Mostrar resultado exitoso
+                qrResultado.className = 'result success';
+                qrResultado.innerHTML = `
+                    <div class="verified-badge">✅</div>
+                    <h3>¡Certificado Generado!</h3>
+                    <div class="certificate-info" style="color: #155724;">
+                        <div class="info-row" style="border-color: rgba(0,0,0,0.1);">
+                            <span class="info-label">Código:</span>
+                            <span class="info-value">${codigo}</span>
+                        </div>
+                        <div class="info-row" style="border-color: rgba(0,0,0,0.1);">
+                            <span class="info-label">Nombre:</span>
+                            <span class="info-value">${nombre}</span>
+                        </div>
+                        <div class="info-row" style="border-color: rgba(0,0,0,0.1);">
+                            <span class="info-label">Curso:</span>
+                            <span class="info-value">${curso}</span>
+                        </div>
+                    </div>
+                    <div class="qr-container">
+                        <div id="qrcode"></div>
+                    </div>
+                    <div class="qr-actions">
+                        <button onclick="descargarQR()">
+                            <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
+                            </svg>
+                            Descargar QR
+                        </button>
+                        <button class="btn-secondary" onclick="imprimirCertificado()">
+                            <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M6 14h12v8H6z" fill="currentColor" stroke="none"/>
+                            </svg>
+                            Imprimir
+                        </button>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
+                        Link: <a href="${verifyLink}" target="_blank" style="color: white;">${verifyLink}</a>
+                    </p>
+                `;
+
+                // Generar código QR
+                new QRCode(document.getElementById("qrcode"), {
+                    text: verifyLink,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                successMessage.style.display = 'block';
+                successMessage.innerHTML = '✅ Guardado en la base de datos';
+
+                // Limpiar formulario
+                document.getElementById('nombreAlumno').value = '';
+                document.getElementById('cursoSelect').value = '';
+                document.getElementById('estadoCertificado').value = 'Activo';
+                document.getElementById('horasCurso').value = '';
+
+            } catch (error) {
+                qrResultado.className = 'result error';
+                qrResultado.innerHTML = `
+                    <div class="verified-badge">⚠️</div>
+                    <h3>Error</h3>
+                    <p>${error.message}</p>
+                `;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        /**
+         * Guardar certificado en Google Sheets vía Apps Script
+         */
+        async function guardarEnGoogleSheets(codigo, nombre, curso, fecha, estado) {
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codigo, nombre, curso, fecha, estado })
+            });
+        }
+
+        // ===========================================
+        // FUNCIONES UTILITARIAS
+        // ===========================================
+        
+        /**
+         * Descargar QR como imagen PNG
+         */
+        function descargarQR() {
+            const canvas = document.querySelector('#qrcode canvas') || 
+                          document.querySelector('#qrcode-existente canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = 'QR-Certificado.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        }
+
+        /**
+         * Imprimir certificado
+         */
+        function imprimirCertificado() {
+            window.print();
+        }
+
+        // Permitir Enter para verificar certificado
+        document.getElementById('codigoInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verificarCertificado();
+            }
+        });
+    </script>
+</body>
+</html>
