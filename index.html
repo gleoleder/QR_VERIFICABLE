@@ -13,6 +13,26 @@
          =========================================== -->
     <style>
         /* ===========================================
+           ICONOS SVG - LIBRERÍA DE ICONOS
+           =========================================== */
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+        
+        .icon-lg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .icon-xl {
+            width: 32px;
+            height: 32px;
+        }
+
+        /* ===========================================
            RESET Y ESTILOS GENERALES
            =========================================== */
         * {
@@ -790,7 +810,12 @@
                     <label>Usuario</label>
                     <div class="input-wrapper">
                         <input type="text" id="adminUser" placeholder="Ingresa tu usuario" autocomplete="off" />
-                        <span class="input-icon">👤</span>
+                        <span class="input-icon">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4" fill="currentColor"/>
+                                <path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-6-2-6-8-6z" fill="currentColor"/>
+                            </svg>
+                        </span>
                     </div>
                 </div>
                 
@@ -798,20 +823,38 @@
                     <label>Contraseña</label>
                     <div class="input-wrapper">
                         <input type="password" id="adminPass" placeholder="Ingresa tu contraseña" autocomplete="off" />
-                        <span class="input-icon">🔒</span>
+                        <span class="input-icon">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor" opacity="0.3"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <circle cx="12" cy="16" r="2" fill="currentColor"/>
+                            </svg>
+                        </span>
                     </div>
                 </div>
                 
                 <button class="login-btn" onclick="login()">
-                    🔐 Ingresar al Sistema
+                    <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                    Ingresar al Sistema
                 </button>
                 
                 <div id="loginError" class="login-error">
-                    ❌ Usuario o contraseña incorrectos
+                    <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>
+                        <path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Usuario o contraseña incorrectos
                 </div>
                 
                 <div class="login-footer">
-                    🔐 Acceso exclusivo para administradores
+                    <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor" opacity="0.3"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                    Acceso exclusivo para administradores
                 </div>
             </div>
         </div>
@@ -856,7 +899,11 @@
         <!-- Botón de Login Admin (visible cuando no está logueado) -->
         <div id="loginContainer">
             <button class="btn-login-access" onclick="openLogin()">
-                🔐 Acceso Admin
+                <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" fill="currentColor"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+                Acceso Admin
             </button>
         </div>
 
@@ -864,9 +911,28 @@
              PESTAÑAS DE NAVEGACIÓN
              =========================================== -->
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('verificar')">🔍 Verificar</button>
-            <button class="tab" onclick="checkAuthAndOpen('generar')">📋 Generar QR</button>
-            <button class="tab" onclick="checkAuthAndOpen('buscar')">🔎 Buscar QR</button>
+            <button class="tab active" onclick="switchTab('verificar')">
+                <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Verificar
+            </button>
+            <button class="tab" onclick="checkAuthAndOpen('generar')">
+                <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Generar QR
+            </button>
+            <button class="tab" onclick="checkAuthAndOpen('buscar')">
+                <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M11 8v6M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Buscar QR
+            </button>
         </div>
 
         <!-- ===========================================
@@ -1257,12 +1323,37 @@
                         <span class="cert-item-curso">${cert.curso}</span>
                     </div>
                     <div class="cert-item-info">
-                        📅 ${cert.fecha} | 🔖 ${cert.codigo} | 
-                        ${cert.estado === 'Activo' ? '✅' : '⚠️'} ${cert.estado}
+                        <svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;" viewBox="0 0 24 24">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        ${cert.fecha} |
+                        <svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin: 0 4px;" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                        ${cert.codigo} |
+                        ${cert.estado === 'Activo' 
+                            ? '<svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; color: #28a745;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" fill="none"/><path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                            : '<svg class="icon" style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; color: #ffc107;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+                        }
+                        ${cert.estado}
                     </div>
                     <div class="cert-item-actions">
-                        <button class="btn-view-qr" onclick="event.stopPropagation(); verQRModal('${cert.codigo}', '${cert.nombre}')">👁️ Ver QR</button>
-                        <button class="btn-link" onclick="event.stopPropagation(); copiarLink('${cert.codigo}')">🔗 Link</button>
+                        <button class="btn-view-qr" onclick="event.stopPropagation(); verQRModal('${cert.codigo}', '${cert.nombre}')">
+                            <svg class="icon" style="margin-right: 4px;" viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                            Ver QR
+                        </button>
+                        <button class="btn-link" onclick="event.stopPropagation(); copiarLink('${cert.codigo}')">
+                            <svg class="icon" style="margin-right: 4px;" viewBox="0 0 24 24">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                            Link
+                        </button>
                     </div>
                 </div>
             `).join('');
@@ -1504,7 +1595,11 @@
                     
                     resultado.className = 'result success';
                     resultado.innerHTML = `
-                        <div class="verified-badge">✅</div>
+                        <div class="verified-badge">
+                            <svg class="icon-xl" viewBox="0 0 24 24" style="width: 50px; height: 50px;">
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+                            </svg>
+                        </div>
                         <h3 style="color: white; margin-bottom: 5px;">¡Certificado Verificado!</h3>
                         <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 20px;">
                             Este es un certificado oficial emitido por el <strong>Instituto CEAN Capacitación</strong>
@@ -1512,34 +1607,70 @@
                         
                         <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; margin-top: 15px;">
                             <p style="color: white; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
-                                📜 El dueño del certificado es:
+                                <svg class="icon" style="margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                El dueño del certificado es:
                             </p>
                             <h2 style="color: white; font-size: 24px; margin-bottom: 20px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
-                                👤 ${nombre}
+                                <svg class="icon-lg" style="margin-right: 8px; vertical-align: middle;" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="8" r="4" fill="currentColor"/>
+                                    <path d="M12 14c-6 0-8 3-8 6v2h16v-2c0-6-2-6-8-6z" fill="currentColor"/>
+                                </svg>
+                                ${nombre}
                             </h2>
                             
                             <div style="text-align: left; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px;">
                                 <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
-                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">🎓 Curso:</span>
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">
+                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            <path d="M6 12v5c3 3 9 3 12 0v-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                        </svg>
+                                        Curso:
+                                    </span>
                                     <span class="info-value" style="color: white;">${curso}</span>
                                 </div>
                                 <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
-                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">📅 Fecha de Emisión:</span>
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">
+                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                        Fecha de Emisión:
+                                    </span>
                                     <span class="info-value" style="color: white;">${fecha}</span>
                                 </div>
                                 <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
-                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">🔖 Código:</span>
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">
+                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/>
+                                        </svg>
+                                        Código:
+                                    </span>
                                     <span class="info-value" style="color: white;">${codigo}</span>
                                 </div>
                                 <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
-                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">✓ Estado:</span>
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">
+                                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Estado:
+                                    </span>
                                     <span class="info-value" style="color: white;">${estado}</span>
                                 </div>
                             </div>
                         </div>
                         
                         <p style="color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 15px;">
-                            🏫 Instituto CEAN Capacitación - Autenticidad Verificada
+                            <svg class="icon" style="margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24">
+                                <path d="M3 21h18v-8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                            Instituto CEAN Capacitación - Autenticidad Verificada
                         </p>
                     `;
                 } else {
