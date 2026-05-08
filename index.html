@@ -1961,34 +1961,37 @@
         function descargarQR() {
     const canvas = document.querySelector('#qrcode canvas') || document.querySelector('#qrcode-existente canvas') || document.querySelector('#qrModalContent canvas');
     if (canvas) {
-        try {
-            let nombrePersona = 'Certificado';
-            const modalNom = document.getElementById('qrModalNombre');
-            if (modalNom && modalNom.textContent) nombrePersona = modalNom.textContent.trim();
+        let nombrePersona = '';
+        const modalNom = document.getElementById('qrModalNombre');
+        if (modalNom && modalNom.textContent) nombrePersona = modalNom.textContent.trim();
+        if (!nombrePersona) {
             const nomInput = document.getElementById('nombreAlumno');
             if (nomInput && nomInput.value) nombrePersona = nomInput.value.trim();
-            const nombreLimpio = nombrePersona.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0,50);
-            const fecha = new Date().toISOString().slice(0,10).replace(/-/g,'');
-            const borderWidth = 30;
-            const newCanvas = document.createElement('canvas');
-            const ctx = newCanvas.getContext('2d');
-            newCanvas.width = canvas.width + (borderWidth * 2);
-            newCanvas.height = canvas.height + (borderWidth * 2);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
-            ctx.drawImage(canvas, borderWidth, borderWidth);
-            const link = document.createElement('a');
-            link.download = 'QR_' + nombreLimpio + '_' + fecha + '.png';
-            link.href = newCanvas.toDataURL('image/png', 1.0);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error al descargar QR');
         }
-    } else {
-        alert('No se encontró el QR');
+        if (!nombrePersona) {
+            const resultado = document.getElementById('resultado');
+            if (resultado) {
+                const h2 = resultado.getElementsByTagName('h2');
+                if (h2.length > 0) nombrePersona = h2[0].textContent.trim();
+            }
+        }
+        if (!nombrePersona) nombrePersona = 'Certificado';
+        const nombreLimpio = nombrePersona.normalize('NFD').replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
+        const fecha = new Date().toISOString().slice(0,10).replace(/-/g,'');
+        const borderWidth = 30;
+        const newCanvas = document.createElement('canvas');
+        const ctx = newCanvas.getContext('2d');
+        newCanvas.width = canvas.width + (borderWidth * 2);
+        newCanvas.height = canvas.height + (borderWidth * 2);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+        ctx.drawImage(canvas, borderWidth, borderWidth);
+        const link = document.createElement('a');
+        link.download = nombreLimpio + '_' + fecha + '.png';
+        link.href = newCanvas.toDataURL('image/png', 1.0);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 }
 
