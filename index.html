@@ -587,6 +587,33 @@
         .cert-item-actions button {
             padding: 8px 15px;
             font-size: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        /* Botón Ver QR (dorado) */
+        .btn-view-qr {
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+            color: white;
+        }
+
+        .btn-view-qr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212,175,55,0.3);
+        }
+
+        /* Botón Link (gris) */
+        .btn-link {
+            background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+            color: white;
+        }
+
+        .btn-link:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #6c757d 100%);
+            transform: translateY(-2px);
         }
 
         .filter-group {
@@ -601,6 +628,85 @@
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 14px;
+        }
+
+        /* ===========================================
+           MODAL PARA VER QR
+           =========================================== */
+        .qr-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .qr-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        .qr-modal h3 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .qr-modal .qr-preview {
+            margin: 20px auto;
+            display: inline-block;
+        }
+
+        .qr-modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .qr-modal-actions button {
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .qr-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .qr-modal-close:hover {
+            background: #d4af37;
+            color: white;
         }
 
         /* ===========================================
@@ -707,6 +813,24 @@
                 <div class="login-footer">
                     🔐 Acceso exclusivo para administradores
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===========================================
+         MODAL PARA VER QR (PREVISUALIZACIÓN)
+         =========================================== -->
+    <div id="qrModalOverlay" class="qr-modal-overlay hidden">
+        <div class="qr-modal">
+            <button class="qr-modal-close" onclick="closeQRModal()">×</button>
+            <h3 id="qrModalTitle">Vista Previa del QR</h3>
+            <div class="qr-preview">
+                <div id="qrModalContent"></div>
+            </div>
+            <p id="qrModalNombre" style="color: #666; font-size: 14px; margin-top: 15px;"></p>
+            <div class="qr-modal-actions">
+                <button class="btn-view-qr" onclick="descargarQRModal()">⬇️ Descargar</button>
+                <button class="btn-link" onclick="closeQRModal()">❌ Cerrar</button>
             </div>
         </div>
     </div>
@@ -1137,8 +1261,8 @@
                         ${cert.estado === 'Activo' ? '✅' : '⚠️'} ${cert.estado}
                     </div>
                     <div class="cert-item-actions">
-                        <button onclick="event.stopPropagation(); descargarQRExistente('${cert.codigo}', '${cert.nombre}')">⬇️ QR</button>
-                        <button class="btn-secondary" onclick="event.stopPropagation(); copiarLink('${cert.codigo}')">🔗 Link</button>
+                        <button class="btn-view-qr" onclick="event.stopPropagation(); verQRModal('${cert.codigo}', '${cert.nombre}')">👁️ Ver QR</button>
+                        <button class="btn-link" onclick="event.stopPropagation(); copiarLink('${cert.codigo}')">🔗 Link</button>
                     </div>
                 </div>
             `).join('');
@@ -1263,6 +1387,66 @@
                 prompt('Copia este link:', link);
             });
         }
+
+        // ===========================================
+        // FUNCIONES DEL MODAL QR
+        // ===========================================
+        
+        /**
+         * Mostrar modal con vista previa del QR
+         * @param {string} codigo - Código del certificado
+         * @param {string} nombre - Nombre del alumno
+         */
+        function verQRModal(codigo, nombre) {
+            const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
+            
+            // Limpiar contenido anterior
+            document.getElementById('qrModalContent').innerHTML = '';
+            document.getElementById('qrModalNombre').textContent = nombre;
+            
+            // Mostrar modal
+            document.getElementById('qrModalOverlay').classList.remove('hidden');
+            
+            // Generar QR después de un pequeño delay
+            setTimeout(() => {
+                new QRCode(document.getElementById("qrModalContent"), {
+                    text: verifyLink,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }, 100);
+        }
+
+        /**
+         * Cerrar modal QR
+         */
+        function closeQRModal() {
+            document.getElementById('qrModalOverlay').classList.add('hidden');
+            document.getElementById('qrModalContent').innerHTML = '';
+        }
+
+        /**
+         * Descargar QR desde el modal
+         */
+        function descargarQRModal() {
+            const canvas = document.querySelector('#qrModalContent canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = 'QR-Certificado.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        }
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeQRModal();
+            }
+        });
 
         /**
          * Generar código único para certificado
