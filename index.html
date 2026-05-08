@@ -135,24 +135,32 @@
             width: 90%;
             position: relative;
         }
+        .login-box .logo {
+            display: block;
+            margin: 0 auto 20px;
+        }
         .login-close {
             position: absolute;
-            top: 10px; right: 10px;
-            width: 32px;
-            height: 32px;
-            background: #f0f0f0;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background: #e0e0e0;
             border: none;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             color: #666;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
+            line-height: 30px;
+            text-align: center;
             padding: 0;
+            transition: all 0.3s;
         }
-        .login-close:hover { background: #d4af37; color: white; transform: rotate(90deg); }
+        .login-close:hover {
+            background: #d4af37;
+            color: white;
+        }
         .login-box h2 { color: #1a1a2e; margin-bottom: 20px; }
         .login-box input {
             width: 100%;
@@ -217,11 +225,11 @@
     <!-- Login Overlay -->
     <div id="loginOverlay" class="login-overlay hidden">
         <div class="login-box">
-            <button class="login-close" onclick="closeLogin()">✕</button>
             <svg class="logo" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="45" fill="#d4af37"/>
                 <path d="M50 15 L50 85 M30 35 L50 15 L70 35 M35 50 L65 50 M30 65 L50 85 L70 65" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
             </svg>
+            <button class="login-close" onclick="closeLogin()" title="Cerrar">✕</button>
             <h2>Acceso Admin</h2>
             <input type="text" id="adminUser" placeholder="Usuario" />
             <input type="password" id="adminPass" placeholder="Contraseña" />
