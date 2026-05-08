@@ -583,7 +583,7 @@
         let certificadosData = [];
 
         // Verificar sesión al cargar
-        window.onload = function() {
+        window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const codigo = urlParams.get('codigo') || urlParams.get('code') || urlParams.get('cert');
 
@@ -602,24 +602,25 @@
                 isAdmin = true;
                 document.getElementById('loginOverlay').classList.add('hidden');
                 document.getElementById('adminBadge').classList.remove('hidden');
-                cargarCursos();
-                cargarCertificados();
             }
 
-            // Cargar cursos disponibles
-            cargarCursos();
+            // Cargar cursos siempre
+            await cargarCursos();
         };
 
         // Cambiar entre pestañas
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
+
             document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
             document.getElementById(`tab-${tab}`).classList.add('active');
 
             if (tab === 'buscar') {
                 cargarCertificados();
+            }
+            if (tab === 'generar') {
+                cargarCursos();
             }
         }
 
@@ -646,12 +647,10 @@
                 document.getElementById('loginOverlay').classList.add('hidden');
                 document.getElementById('adminBadge').classList.remove('hidden');
                 document.getElementById('loginError').style.display = 'none';
-                
-                // Cargar datos
+
+                // Cargar datos según la pestaña activa
                 cargarCursos();
-                if (document.getElementById('tab-buscar').classList.contains('active')) {
-                    cargarCertificados();
-                }
+                cargarCertificados();
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
@@ -673,17 +672,24 @@
         });
 
         // Cargar cursos desde Google Sheets
+        let cursosListenerAdded = false;
+        
         async function cargarCursos() {
             try {
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE_CURSOS}?key=${API_KEY}`;
                 const response = await fetch(url);
-                
+
+                const selectGenerar = document.getElementById('cursoSelect');
+                const selectBuscar = document.getElementById('searchCurso');
+
                 if (!response.ok) {
                     throw new Error('Error al cargar cursos');
                 }
 
                 const data = await response.json();
                 const rows = data.values || [];
+
+                console.log('Cursos cargados:', rows);
 
                 // Saltar encabezados (fila 1)
                 cursosData = rows.slice(1).map(row => ({
@@ -693,14 +699,11 @@
                 })).filter(c => c.nombre);
 
                 // Actualizar selects
-                const selectGenerar = document.getElementById('cursoSelect');
-                const selectBuscar = document.getElementById('searchCurso');
-                
                 if (cursosData.length > 0) {
-                    selectGenerar.innerHTML = '<option value="">Seleccionar curso...</option>' + 
+                    selectGenerar.innerHTML = '<option value="">Seleccionar curso...</option>' +
                         cursosData.map(c => `<option value="${c.codigo}" data-horas="${c.horas}">${c.nombre} (${c.horas})</option>`).join('');
-                    
-                    selectBuscar.innerHTML = '<option value="">Todos los cursos</option>' + 
+
+                    selectBuscar.innerHTML = '<option value="">Todos los cursos</option>' +
                         cursosData.map(c => `<option value="${c.codigo}">${c.nombre}</option>`).join('');
                 } else {
                     // Cursos por defecto si no hay en Sheets
@@ -717,38 +720,58 @@
                         { nombre: 'Gestión del Tiempo', horas: '15 horas', codigo: 'tiempo' }
                     ];
                     cursosData = cursosDefault;
-                    
-                    selectGenerar.innerHTML = '<option value="">Seleccionar curso...</option>' + 
+
+                    selectGenerar.innerHTML = '<option value="">Seleccionar curso...</option>' +
                         cursosData.map(c => `<option value="${c.codigo}" data-horas="${c.horas}">${c.nombre} (${c.horas})</option>`).join('');
-                    
-                    selectBuscar.innerHTML = '<option value="">Todos los cursos</option>' + 
+
+                    selectBuscar.innerHTML = '<option value="">Todos los cursos</option>' +
                         cursosData.map(c => `<option value="${c.codigo}">${c.nombre}</option>`).join('');
                 }
 
-                // Actualizar horas al seleccionar curso
-                selectGenerar.addEventListener('change', function() {
-                    const selected = this.options[this.selectedIndex];
-                    const horas = selected.getAttribute('data-horas') || '';
-                    document.getElementById('horasCurso').value = horas;
-                });
+                // Actualizar horas al seleccionar curso (solo agregar listener una vez)
+                if (!cursosListenerAdded) {
+                    selectGenerar.addEventListener('change', function() {
+                        const selected = this.options[this.selectedIndex];
+                        const horas = selected.getAttribute('data-horas') || '';
+                        document.getElementById('horasCurso').value = horas;
+                    });
+                    cursosListenerAdded = true;
+                }
 
             } catch (error) {
                 console.error('Error cargando cursos:', error);
+                // Usar cursos por defecto en caso de error
+                const selectGenerar = document.getElementById('cursoSelect');
+                const cursosDefault = [
+                    { nombre: 'Ley SAFCO', horas: '40 horas', codigo: 'ley-safco' },
+                    { nombre: 'Marketing Digital', horas: '30 horas', codigo: 'marketing-digital' },
+                    { nombre: 'Excel Avanzado', horas: '20 horas', codigo: 'excel-avanzado' },
+                    { nombre: 'Python Básico', horas: '40 horas', codigo: 'python-basico' },
+                    { nombre: 'JavaScript', horas: '35 horas', codigo: 'javascript' }
+                ];
+                cursosData = cursosDefault;
+                selectGenerar.innerHTML = '<option value="">Seleccionar curso...</option>' +
+                    cursosData.map(c => `<option value="${c.codigo}" data-horas="${c.horas}">${c.nombre} (${c.horas})</option>`).join('');
             }
         }
 
         // Cargar certificados desde Google Sheets
         async function cargarCertificados() {
+            const container = document.getElementById('certificadosList');
+            container.innerHTML = '<p style="color: #666; text-align: center;">Cargando certificados...</p>';
+            
             try {
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE_READ}?key=${API_KEY}`;
                 const response = await fetch(url);
-                
+
                 if (!response.ok) {
                     throw new Error('Error al cargar certificados');
                 }
 
                 const data = await response.json();
                 const rows = data.values || [];
+
+                console.log('Certificados cargados:', rows);
 
                 // Saltar encabezados
                 certificadosData = rows.slice(1).map(row => ({
@@ -763,8 +786,8 @@
 
             } catch (error) {
                 console.error('Error cargando certificados:', error);
-                document.getElementById('certificadosList').innerHTML = 
-                    '<p style="color: #dc3545; text-align: center;">Error al cargar certificados. Verifica que exista la hoja "Certificados".</p>';
+                container.innerHTML =
+                    '<p style="color: #666; text-align: center;">No hay certificados registrados aún.<br>Los certificados aparecerán aquí cuando los generes.</p>';
             }
         }
 
@@ -782,9 +805,11 @@
             });
 
             const container = document.getElementById('certificadosList');
-            
+
             if (filtrados.length === 0) {
-                container.innerHTML = '<p style="color: #666; text-align: center;">No se encontraron certificados</p>';
+                container.innerHTML = certificadosData.length === 0 
+                    ? '<p style="color: #666; text-align: center;">No hay certificados registrados</p>'
+                    : '<p style="color: #666; text-align: center;">No se encontraron certificados con los filtros actuales</p>';
                 return;
             }
 
