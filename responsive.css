@@ -1,0 +1,143 @@
+/* ===========================================
+   RESPONSIVE - MULTIPLES PANTALLAS
+   =========================================== */
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    .container {
+        padding: 25px 20px;
+        border-radius: 15px;
+    }
+    .logo {
+        width: 100px !important;
+        height: 100px !important;
+    }
+    .login-header .logo {
+        width: 100px;
+        height: 100px;
+    }
+    h1 {
+        font-size: 18px;
+    }
+    .subtitle {
+        font-size: 12px;
+    }
+    .tabs {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .tab {
+        padding: 10px;
+        font-size: 13px;
+    }
+    .search-box {
+        flex-direction: column;
+    }
+    .search-box input,
+    .search-box button {
+        width: 100%;
+    }
+    .filter-group {
+        flex-direction: column;
+    }
+    .form-group input,
+    .form-group select {
+        font-size: 14px;
+    }
+    .login-box {
+        padding: 30px 20px;
+        width: 95%;
+    }
+    .login-header {
+        padding: 30px 20px;
+    }
+    .login-header h2 {
+        font-size: 22px;
+    }
+    .verified-badge {
+        font-size: 40px;
+    }
+    .qr-actions,
+    .qr-modal-actions {
+        flex-direction: column;
+    }
+    .qr-actions button,
+    .qr-modal-actions button {
+        width: 100%;
+    }
+}
+
+/* Tablets (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .container {
+        max-width: 90%;
+        padding: 30px;
+    }
+    .logo {
+        width: 110px !important;
+        height: 110px !important;
+    }
+    .login-header .logo {
+        width: 110px;
+        height: 110px;
+    }
+    .tabs {
+        gap: 8px;
+    }
+    .tab {
+        padding: 10px;
+        font-size: 13px;
+    }
+    h1 {
+        font-size: 20px;
+    }
+}
+
+/* Tablets grandes (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        max-width: 85%;
+    }
+    .login-card {
+        max-width: 450px;
+    }
+}
+
+/* Desktops grandes (más de 1400px) */
+@media (min-width: 1401px) {
+    .container {
+        max-width: 800px;
+    }
+    .login-card {
+        max-width: 450px;
+    }
+}
+
+/* Modo horizontal (móviles en landscape) */
+@media (max-height: 500px) and (orientation: landscape) {
+    body {
+        align-items: flex-start;
+        padding: 10px;
+    }
+    .container {
+        padding: 20px;
+        margin-top: 10px;
+    }
+    .login-box {
+        padding: 20px;
+    }
+    .login-header {
+        padding: 20px;
+    }
+    .login-header .logo {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 10px;
+    }
+    .login-body {
+        padding: 20px;
+    }
+}
