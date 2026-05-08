@@ -872,8 +872,19 @@
             </div>
             <p id="qrModalNombre" style="color: #666; font-size: 14px; margin-top: 15px;"></p>
             <div class="qr-modal-actions">
-                <button class="btn-view-qr" onclick="descargarQRModal()">⬇️ Descargar</button>
-                <button class="btn-link" onclick="closeQRModal()">❌ Cerrar</button>
+                <button class="btn-view-qr" onclick="descargarQRModal()">
+                    <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                        <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
+                    </svg>
+                    Descargar
+                </button>
+                <button class="btn-link" onclick="closeQRModal()">
+                    <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Cerrar
+                </button>
             </div>
         </div>
     </div>
@@ -1404,8 +1415,20 @@
                     <div id="qrcode-existente"></div>
                 </div>
                 <div class="qr-actions">
-                    <button onclick="descargarQR()">⬇️ Descargar QR</button>
-                    <button class="btn-secondary" onclick="imprimirCertificado()">🖨️ Imprimir</button>
+                    <button onclick="descargarQR()">
+                        <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
+                        </svg>
+                        Descargar QR
+                    </button>
+                    <button class="btn-secondary" onclick="imprimirCertificado()">
+                        <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 14h12v8H6z" fill="currentColor" stroke="none"/>
+                        </svg>
+                        Imprimir
+                    </button>
                 </div>
                 <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
                     Enlace: <a href="${verifyLink}" target="_blank" style="color: #155724;">${verifyLink}</a>
@@ -1531,6 +1554,14 @@
                 link.click();
             }
         }
+
+        // Icono SVG de descargar (reutilizable)
+        const downloadIcon = `
+            <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
+            </svg>
+        `;
 
         // Cerrar modal con tecla Escape
         document.addEventListener('keydown', function(e) {
@@ -1754,8 +1785,20 @@
                         <div id="qrcode"></div>
                     </div>
                     <div class="qr-actions">
-                        <button onclick="descargarQR()">⬇️ Descargar QR</button>
-                        <button class="btn-secondary" onclick="imprimirCertificado()">🖨️ Imprimir</button>
+                        <button onclick="descargarQR()">
+                            <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M13 11.15V4a1 1 0 1 0-2 0v7.15L8.78 8.374a1 1 0 1 0-1.56 1.25l4 5a1 1 0 0 0 1.56 0l4-5a1 1 0 1 0-1.56-1.25L13 11.15Z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd" d="M9.657 15.874 7.358 13H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2.358l-2.3 2.874a3 3 0 0 1-4.685 0ZM17 16a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H17Z" clip-rule="evenodd"/>
+                            </svg>
+                            Descargar QR
+                        </button>
+                        <button class="btn-secondary" onclick="imprimirCertificado()">
+                            <svg class="icon" style="margin-right: 8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M6 14h12v8H6z" fill="currentColor" stroke="none"/>
+                            </svg>
+                            Imprimir
+                        </button>
                     </div>
                     <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
                         Link: <a href="${verifyLink}" target="_blank" style="color: white;">${verifyLink}</a>
