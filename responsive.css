@@ -2,25 +2,25 @@
    RESPONSIVE - MULTIPLES PANTALLAS
    =========================================== */
 
-/* Sello CEAN - Centrado para TODOS los dispositivos */
+/* Sello CEAN - Centrado para TODOS los dispositivos - EN MEDIO de las filas */
 .result.success {
     position: relative !important;
-    padding-bottom: 120px !important;
+    padding-top: 80px !important;
 }
 .result.success::after {
     content: '' !important;
     position: absolute !important;
-    bottom: 20px !important;
+    top: 50% !important;
     left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 100px !important;
-    height: 100px !important;
+    transform: translate(-50%, -50%) !important;
+    width: 120px !important;
+    height: 120px !important;
     background-image: url('sello-cean.png') !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
     background-size: contain !important;
-    opacity: 0.4 !important;
-    z-index: 9999 !important;
+    opacity: 0.3 !important;
+    z-index: 1 !important;
     pointer-events: none !important;
 }
 
