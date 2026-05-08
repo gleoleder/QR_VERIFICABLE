@@ -1014,8 +1014,20 @@
 
                 <div class="form-group">
                     <label for="cursoSelect">Curso *</label>
-                    <select id="cursoSelect">
-                        <option value="">Cargando cursos...</option>
+                    <!-- Buscador de cursos -->
+                    <div class="search-box" style="margin-bottom: 10px;">
+                        <input type="text" id="searchCursoGenerar" placeholder="🔎 Buscar curso por nombre..." 
+                               onkeyup="buscarCursoParaGenerar()" />
+                        <button onclick="buscarCursoParaGenerar()" type="button">
+                            <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Buscar
+                        </button>
+                    </div>
+                    <select id="cursoSelect" onchange="actualizarHorasCurso()">
+                        <option value="">Seleccionar curso...</option>
                     </select>
                 </div>
 
@@ -1309,14 +1321,7 @@
             selectBuscar.innerHTML = '<option value="">Todos los cursos</option>' +
                 cursosData.map(c => `<option value="${c.codigo}">${c.nombre}</option>`).join('');
 
-            // Agregar listener para mostrar horas al seleccionar curso (solo una vez)
-            if (!cursosListenerAdded) {
-                selectGenerar.addEventListener('change', function() {
-                    const selected = this.options[this.selectedIndex];
-                    document.getElementById('horasCurso').value = selected.getAttribute('data-horas') || '';
-                });
-                cursosListenerAdded = true;
-            }
+            // El listener se maneja con el onchange en el HTML
         }
 
         /**
@@ -1378,6 +1383,41 @@
                 selectCurso.value = cursoEncontrado.codigo;
                 filtrarCertificados();
             }
+        }
+
+        /**
+         * Buscar curso para generar certificado
+         */
+        function buscarCursoParaGenerar() {
+            const texto = document.getElementById('searchCursoGenerar').value.toLowerCase();
+            const selectCurso = document.getElementById('cursoSelect');
+            
+            if (!texto) {
+                selectCurso.value = '';
+                actualizarHorasCurso();
+                return;
+            }
+            
+            // Buscar el curso que coincida con el texto
+            const cursoEncontrado = cursosData.find(c => 
+                c.nombre.toLowerCase().includes(texto) || 
+                c.codigo.toLowerCase().includes(texto)
+            );
+            
+            if (cursoEncontrado) {
+                selectCurso.value = cursoEncontrado.codigo;
+                actualizarHorasCurso();
+            }
+        }
+
+        /**
+         * Actualizar horas del curso seleccionado
+         */
+        function actualizarHorasCurso() {
+            const select = document.getElementById('cursoSelect');
+            const selected = select.options[select.selectedIndex];
+            const horas = selected.getAttribute('data-horas') || '';
+            document.getElementById('horasCurso').value = horas;
         }
 
         /**
