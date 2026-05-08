@@ -1064,10 +1064,30 @@
                     </select>
                 </div>
 
+                <!-- Buscador de cursos específico -->
+                <div class="search-box" style="margin-bottom: 15px;">
+                    <input type="text" id="searchCursoTexto" placeholder="🔎 Buscar curso por nombre..." 
+                           onkeyup="buscarCursoPorTexto()" />
+                    <button onclick="buscarCursoPorTexto()">
+                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Buscar Curso
+                    </button>
+                </div>
+
                 <div class="search-box">
                     <input type="text" id="searchCodigo" placeholder="O busca por código..." 
                            onkeyup="filtrarCertificados()" />
-                    <button onclick="filtrarCertificados()">🔍 Buscar</button>
+                    <button onclick="filtrarCertificados()">
+                        <svg class="icon" style="margin-right: 6px;" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M11 8v6M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Buscar
+                    </button>
                 </div>
 
                 <!-- Lista de resultados -->
@@ -1335,6 +1355,31 @@
         // BÚSQUEDA Y FILTRADO DE CERTIFICADOS
         // ===========================================
         
+        /**
+         * Buscar curso por texto en el buscador específico
+         */
+        function buscarCursoPorTexto() {
+            const texto = document.getElementById('searchCursoTexto').value.toLowerCase();
+            const selectCurso = document.getElementById('searchCurso');
+            
+            if (!texto) {
+                selectCurso.value = '';
+                filtrarCertificados();
+                return;
+            }
+            
+            // Buscar el curso que coincida con el texto
+            const cursoEncontrado = cursosData.find(c => 
+                c.nombre.toLowerCase().includes(texto) || 
+                c.codigo.toLowerCase().includes(texto)
+            );
+            
+            if (cursoEncontrado) {
+                selectCurso.value = cursoEncontrado.codigo;
+                filtrarCertificados();
+            }
+        }
+
         /**
          * Filtrar certificados por nombre, curso o código
          */
