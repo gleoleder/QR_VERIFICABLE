@@ -178,11 +178,23 @@
             border-radius: 12px;
             font-size: 15px;
             transition: all 0.3s;
+            background: white !important;
+            -webkit-background-clip: text !important;
         }
         .login-box input:focus {
             outline: none;
             border-color: #d4af37;
             box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+        }
+        /* Quitar autofill de Chrome */
+        .login-box input:-webkit-autofill,
+        .login-box input:-webkit-autofill:hover,
+        .login-box input:-webkit-autofill:focus,
+        .login-box input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px white inset !important;
+            box-shadow: 0 0 0 30px white inset !important;
+            -webkit-text-fill-color: #333 !important;
+            transition: background-color 5000s ease-in-out 0s !important;
         }
         .login-box button {
             width: 100%;
@@ -250,8 +262,11 @@
                 <path d="M50 15 L50 85 M30 35 L50 15 L70 35 M35 50 L65 50 M30 65 L50 85 L70 65" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
             </svg>
             <h2>Acceso Admin</h2>
+            <!-- Campo oculto para engañar autofill -->
+            <input type="text" style="display:none;" />
+            <input type="password" style="display:none;" />
             <input type="text" id="adminUser" placeholder="Usuario" autocomplete="off" />
-            <input type="password" id="adminPass" placeholder="Contraseña" />
+            <input type="password" id="adminPass" placeholder="Contraseña" autocomplete="off" />
             <button onclick="login()">Ingresar</button>
             <p id="loginError" style="color: #dc3545; margin-top: 15px; display: none; text-align: center; font-size: 14px;">❌ Usuario o contraseña incorrectos</p>
         </div>
