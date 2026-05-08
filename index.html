@@ -1563,41 +1563,43 @@
          * @param {string} nombre - Nombre del alumno
          */
         function descargarQRExistente(codigo, nombre) {
-            const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
-            
-            // Crear contenedor temporal
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'fixed';
-            tempDiv.style.left = '-9999px';
-            document.body.appendChild(tempDiv);
-
-            // Generar QR temporal
-            new QRCode(tempDiv, {
-                text: verifyLink,
-                width: 200,
-                height: 200,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-
-            // Descargar después de generar
-            setTimeout(() => {
-                const canvas = tempDiv.querySelector('canvas');
-                if (canvas) {
-                    const link = document.createElement('a');
-                    link.download = `QR-${nombre.replace(/ /g, '_')}-${codigo}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                }
-                document.body.removeChild(tempDiv);
-            }, 500);
+    const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'fixed';
+    tempDiv.style.left = '-9999px';
+    document.body.appendChild(tempDiv);
+    new QRCode(tempDiv, {
+        text: verifyLink,
+        width: 200,
+        height: 200,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+    setTimeout(() => {
+        const canvas = tempDiv.querySelector('canvas');
+        if (canvas) {
+            const nombreLimpio = nombre.normalize('NFD').replace(/[^\w\s]/g, '').replace(/\s+/g, '_').substring(0,50);
+            const fecha = new Date().toISOString().slice(0,10).replace(/-/g,'');
+            const borderWidth = 30;
+            const newCanvas = document.createElement('canvas');
+            const ctx = newCanvas.getContext('2d');
+            newCanvas.width = canvas.width + (borderWidth * 2);
+            newCanvas.height = canvas.height + (borderWidth * 2);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            ctx.drawImage(canvas, borderWidth, borderWidth);
+            const link = document.createElement('a');
+            link.download = nombreLimpio + '_' + fecha + '.png';
+            link.href = newCanvas.toDataURL('image/png', 1.0);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
+        document.body.removeChild(tempDiv);
+    }, 500);
+}
 
-        /**
-         * Copiar enlace de verificación al portapapeles
-         * @param {string} codigo - Código del certificado
-         */
         function copiarLink(codigo) {
             const link = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
             navigator.clipboard.writeText(link).then(() => {
