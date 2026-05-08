@@ -327,107 +327,189 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: linear-gradient(135deg, rgba(26,26,46,0.95) 0%, rgba(22,33,62,0.95) 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
         }
 
-        .login-box {
+        .login-card {
             background: white;
-            padding: 50px 40px 40px;
-            border-radius: 20px;
-            max-width: 380px;
+            border-radius: 24px;
+            padding: 0;
+            max-width: 420px;
             width: 90%;
             position: relative;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            box-shadow: 0 30px 100px rgba(0,0,0,0.4);
+            overflow: hidden;
+            animation: slideUp 0.4s ease;
         }
 
-        /* Botón X para cerrar login */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header dorado del login */
+        .login-header {
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .login-header .logo {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 15px;
+            background: white;
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .login-header h2 {
+            color: white;
+            font-size: 26px;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .login-header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            margin: 8px 0 0;
+        }
+
+        /* Botón X para cerrar */
         .login-close {
             position: absolute;
             top: 15px;
             right: 15px;
-            width: 36px;
-            height: 36px;
-            background: #f5f5f5;
-            border: 2px solid #e0e0e0;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 22px;
             cursor: pointer;
-            color: #999;
-            line-height: 32px;
-            text-align: center;
-            padding: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s;
+            padding: 0;
         }
 
         .login-close:hover {
-            background: #d4af37;
-            border-color: #d4af37;
-            color: white;
+            background: white;
+            color: #d4af37;
+            transform: rotate(90deg);
         }
 
-        .login-box .logo {
+        /* Cuerpo del formulario */
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
             display: block;
-            margin: 0 auto 25px;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
         }
 
-        .login-box h2 {
-            color: #1a1a2e;
-            margin-bottom: 25px;
-            text-align: center;
-            font-size: 24px;
+        .input-wrapper {
+            position: relative;
         }
 
-        .login-box input {
+        .input-wrapper input {
             width: 100%;
-            padding: 14px 16px;
-            margin-bottom: 16px;
+            padding: 16px 16px 16px 50px;
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 15px;
             transition: all 0.3s;
-            background: white !important;
+            background: #fafafa;
         }
 
-        .login-box input:focus {
+        .input-wrapper input:focus {
             outline: none;
             border-color: #d4af37;
-            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.1);
         }
 
-        /* Quitar autofill de Chrome */
-        .login-box input:-webkit-autofill,
-        .login-box input:-webkit-autofill:hover,
-        .login-box input:-webkit-autofill:focus,
-        .login-box input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px white inset !important;
-            box-shadow: 0 0 0 30px white inset !important;
-            -webkit-text-fill-color: #333 !important;
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #999;
+            transition: color 0.3s;
         }
 
-        .login-box button {
+        .input-wrapper input:focus + .input-icon {
+            color: #d4af37;
+        }
+
+        .login-btn {
             width: 100%;
-            padding: 15px;
-            background: #d4af37;
+            padding: 16px;
+            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 10px;
+            box-shadow: 0 5px 20px rgba(212,175,55,0.3);
         }
 
-        .login-box button:hover {
-            background: #b8941f;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(212,175,55,0.3);
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212,175,55,0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .login-error {
+            background: #ffe6e6;
+            color: #cc0000;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 14px;
+            display: none;
+            border-left: 4px solid #cc0000;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #999;
         }
 
         /* Botón de cerrar sesión (rojo) */
@@ -574,33 +656,49 @@
          LOGIN DE ADMINISTRADOR (OVERLAY)
          =========================================== -->
     <div id="loginOverlay" class="login-overlay hidden">
-        <div class="login-box">
-            <!-- Botón X para cerrar -->
-            <button class="login-close" onclick="closeLogin()" title="Cerrar">×</button>
+        <div class="login-card">
+            <!-- Header dorado -->
+            <div class="login-header">
+                <button class="login-close" onclick="closeLogin()" title="Cerrar">×</button>
+                <svg class="logo" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#d4af37"/>
+                    <path d="M50 15 L50 85 M30 35 L50 15 L70 35 M35 50 L65 50 M30 65 L50 85 L70 65" 
+                          stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <h2>Acceso Admin</h2>
+                <p>Sistema de Certificados CEAN</p>
+            </div>
             
-            <!-- Logo del CEAN -->
-            <svg class="logo" viewBox="0 0 100 100" style="width: 80px; height: 80px;">
-                <circle cx="50" cy="50" r="45" fill="#d4af37"/>
-                <path d="M50 15 L50 85 M30 35 L50 15 L70 35 M35 50 L65 50 M30 65 L50 85 L70 65" 
-                      stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
-            </svg>
-            
-            <h2>Acceso Admin</h2>
-            
-            <!-- Campos ocultos para evitar autofill de Chrome -->
-            <input type="text" style="display:none;" />
-            <input type="password" style="display:none;" />
-            
-            <!-- Campos de login -->
-            <input type="text" id="adminUser" placeholder="Usuario" autocomplete="off" />
-            <input type="password" id="adminPass" placeholder="Contraseña" autocomplete="off" />
-            
-            <button onclick="login()">Ingresar</button>
-            
-            <!-- Mensaje de error -->
-            <p id="loginError" style="color: #dc3545; margin-top: 15px; display: none; text-align: center; font-size: 14px;">
-                ❌ Usuario o contraseña incorrectos
-            </p>
+            <!-- Cuerpo del formulario -->
+            <div class="login-body">
+                <div class="input-group">
+                    <label>Usuario</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="adminUser" placeholder="Ingresa tu usuario" autocomplete="off" />
+                        <span class="input-icon">👤</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Contraseña</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="adminPass" placeholder="Ingresa tu contraseña" autocomplete="off" />
+                        <span class="input-icon">🔒</span>
+                    </div>
+                </div>
+                
+                <button class="login-btn" onclick="login()">
+                    🔐 Ingresar al Sistema
+                </button>
+                
+                <div id="loginError" class="login-error">
+                    ❌ Usuario o contraseña incorrectos
+                </div>
+                
+                <div class="login-footer">
+                    🔐 Acceso exclusivo para administradores
+                </div>
+            </div>
         </div>
     </div>
 
@@ -825,6 +923,10 @@
                 document.getElementById('adminBadge').classList.remove('hidden');
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('loginError').style.display = 'none';
+                
+                // Limpiar campos
+                document.getElementById('adminUser').value = '';
+                document.getElementById('adminPass').value = '';
                 
                 // Cargar datos
                 cargarCursos();
