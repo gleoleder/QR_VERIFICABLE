@@ -1497,32 +1497,50 @@
 
                 if (certificado && certificado.length > 0) {
                     // Certificado encontrado
+                    const nombre = certificado[1] || 'N/A';
+                    const curso = certificado[2] || 'N/A';
+                    const fecha = certificado[3] || 'N/A';
+                    const estado = certificado[4] || 'Activo';
+                    
                     resultado.className = 'result success';
                     resultado.innerHTML = `
                         <div class="verified-badge">✅</div>
-                        <h3>¡Certificado Verificado!</h3>
-                        <div class="certificate-info">
-                            <div class="info-row">
-                                <span class="info-label">Código:</span>
-                                <span class="info-value">${codigo}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Nombre:</span>
-                                <span class="info-value">${certificado[1] || 'N/A'}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Curso:</span>
-                                <span class="info-value">${certificado[2] || 'N/A'}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Fecha:</span>
-                                <span class="info-value">${certificado[3] || 'N/A'}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Estado:</span>
-                                <span class="info-value">${certificado[4] || 'Activo'}</span>
+                        <h3 style="color: white; margin-bottom: 5px;">¡Certificado Verificado!</h3>
+                        <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 20px;">
+                            Este es un certificado oficial emitido por el <strong>Instituto CEAN Capacitación</strong>
+                        </p>
+                        
+                        <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; margin-top: 15px;">
+                            <p style="color: white; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
+                                📜 El dueño del certificado es:
+                            </p>
+                            <h2 style="color: white; font-size: 24px; margin-bottom: 20px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                                👤 ${nombre}
+                            </h2>
+                            
+                            <div style="text-align: left; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 15px;">
+                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">🎓 Curso:</span>
+                                    <span class="info-value" style="color: white;">${curso}</span>
+                                </div>
+                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">📅 Fecha de Emisión:</span>
+                                    <span class="info-value" style="color: white;">${fecha}</span>
+                                </div>
+                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">🔖 Código:</span>
+                                    <span class="info-value" style="color: white;">${codigo}</span>
+                                </div>
+                                <div class="info-row" style="border-color: rgba(255,255,255,0.3);">
+                                    <span class="info-label" style="color: rgba(255,255,255,0.9);">✓ Estado:</span>
+                                    <span class="info-value" style="color: white;">${estado}</span>
+                                </div>
                             </div>
                         </div>
+                        
+                        <p style="color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 15px;">
+                            🏫 Instituto CEAN Capacitación - Autenticidad Verificada
+                        </p>
                     `;
                 } else {
                     // Certificado no encontrado
