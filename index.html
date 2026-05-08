@@ -1653,14 +1653,35 @@
          * Descargar QR desde el modal
          */
         function descargarQRModal() {
-            const canvas = document.querySelector('#qrModalContent canvas');
-            if (canvas) {
-                const link = document.createElement('a');
-                link.download = 'QR-Certificado.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            }
-        }
+    const canvas = document.querySelector('#qrModalContent canvas');
+    if (canvas) {
+        // Obtener nombre del modal
+        const modalNom = document.getElementById('qrModalNombre');
+        let nombrePersona = modalNom && modalNom.textContent ? modalNom.textContent.trim() : 'Certificado';
+        
+        // Limpiar nombre
+        const nombreLimpio = nombrePersona.normalize('NFD').replace(/[^\w\s]/g, '').replace(/\s+/g, '_').substring(0,50);
+        const fecha = new Date().toISOString().slice(0,10).replace(/-/g,'');
+        
+        // Crear canvas con borde blanco
+        const borderWidth = 30;
+        const newCanvas = document.createElement('canvas');
+        const ctx = newCanvas.getContext('2d');
+        newCanvas.width = canvas.width + (borderWidth * 2);
+        newCanvas.height = canvas.height + (borderWidth * 2);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+        ctx.drawImage(canvas, borderWidth, borderWidth);
+        
+        // Descargar
+        const link = document.createElement('a');
+        link.download = nombreLimpio + '_' + fecha + '.png';
+        link.href = newCanvas.toDataURL('image/png', 1.0);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
 
         // Icono SVG de descargar (reutilizable)
         const downloadIcon = `
