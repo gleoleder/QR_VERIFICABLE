@@ -512,15 +512,24 @@
             color: #999;
         }
 
-        /* Botón de cerrar sesión (rojo) */
+        /* Botón de cerrar sesión */
         .logout-btn {
-            background: #dc3545 !important;
-            padding: 8px 15px;
-            font-size: 12px;
+            background: linear-gradient(135deg, #dc3545 0%, #ef4757 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(220,53,69,0.3);
         }
 
         .logout-btn:hover {
-            background: #c82333 !important;
+            background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220,53,69,0.4);
         }
 
         /* ===========================================
