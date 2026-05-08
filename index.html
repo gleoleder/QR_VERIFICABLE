@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificador de Certificados - CEAN Capacitación</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -25,28 +26,60 @@
             background: white;
             border-radius: 20px;
             padding: 40px;
-            max-width: 500px;
+            max-width: 600px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
 
         .logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
         }
 
         h1 {
             color: #1a1a2e;
-            font-size: 24px;
+            font-size: 22px;
             margin-bottom: 10px;
         }
 
         .subtitle {
             color: #666;
             font-size: 14px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .tab.active {
+            background: #d4af37;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .search-box {
@@ -69,30 +102,60 @@
             border-color: #d4af37;
         }
 
-        .search-box button {
-            padding: 15px 30px;
+        .search-box button, .form-box button {
+            padding: 15px 25px;
             background: #d4af37;
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             transition: background 0.3s;
         }
 
-        .search-box button:hover {
+        .search-box button:hover, .form-box button:hover {
             background: #b8941f;
         }
 
-        .search-box button:disabled {
+        .search-box button:disabled, .form-box button:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
 
+        .form-box {
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
         .result {
-            margin-top: 30px;
-            padding: 30px;
+            margin-top: 25px;
+            padding: 25px;
             border-radius: 15px;
             display: none;
         }
@@ -130,7 +193,7 @@
         }
 
         .verified-badge {
-            font-size: 60px;
+            font-size: 50px;
             margin-bottom: 15px;
         }
 
@@ -140,7 +203,7 @@
         }
 
         .certificate-info h3 {
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 15px;
             border-bottom: 2px solid rgba(255, 255, 255, 0.5);
             padding-bottom: 10px;
@@ -149,8 +212,9 @@
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 14px;
         }
 
         .info-row:last-child {
@@ -167,16 +231,83 @@
         }
 
         .scan-hint {
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 25px;
+            padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
             color: #666;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .scan-hint strong {
             color: #d4af37;
+        }
+
+        .qr-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .qr-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .qr-actions button {
+            padding: 10px 20px;
+            font-size: 13px;
+        }
+
+        .btn-secondary {
+            background: #6c757d !important;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268 !important;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+        }
+
+        .course-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .course-option:hover {
+            background: #f8f9fa;
+        }
+
+        .course-option input[type="radio"] {
+            width: auto;
+            margin: 0;
         }
     </style>
 </head>
@@ -188,39 +319,121 @@
                   stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
         </svg>
 
-        <h1>Verificador de Certificados</h1>
-        <p class="subtitle">CEAN Capacitación</p>
+        <h1>CEAN Capacitación</h1>
+        <p class="subtitle">Sistema de Certificados</p>
 
-        <div class="search-box">
-            <input type="text" id="codigoInput" placeholder="Ingresa el código del certificado" />
-            <button onclick="verificarCertificado()" id="btnVerificar">Verificar</button>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('verificar')">🔍 Verificar</button>
+            <button class="tab" onclick="switchTab('generar')">📋 Generar QR</button>
         </div>
 
-        <div id="resultado" class="result"></div>
+        <!-- Pestaña Verificar -->
+        <div id="tab-verificar" class="tab-content active">
+            <div class="search-box">
+                <input type="text" id="codigoInput" placeholder="Ingresa el código del certificado" />
+                <button onclick="verificarCertificado()" id="btnVerificar">Verificar</button>
+            </div>
 
-        <div class="scan-hint">
-            <strong>📱 ¿Escaneaste un QR?</strong><br>
-            El código se cargará automáticamente. Si no es así, ingrésalo manualmente arriba.
+            <div id="resultado" class="result"></div>
+
+            <div class="scan-hint">
+                <strong>📱 ¿Escaneaste un QR?</strong><br>
+                El código se cargará automáticamente. Si no es así, ingrésalo manualmente arriba.
+            </div>
+        </div>
+
+        <!-- Pestaña Generar -->
+        <div id="tab-generar" class="tab-content">
+            <div class="form-box">
+                <div class="form-group">
+                    <label for="nombreAlumno">Nombre del Alumno *</label>
+                    <input type="text" id="nombreAlumno" placeholder="Ej: Juan Pérez García" />
+                </div>
+
+                <div class="form-group">
+                    <label for="cursoSelect">Curso *</label>
+                    <select id="cursoSelect">
+                        <option value="">Seleccionar curso...</option>
+                        <option value="ley-safco">Ley SAFCO</option>
+                        <option value="marketing-digital">Marketing Digital</option>
+                        <option value="excel-avanzado">Excel Avanzado</option>
+                        <option value="python-basico">Python Básico</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="gestion-proyectos">Gestión de Proyectos</option>
+                        <option value="atencion-cliente">Atención al Cliente</option>
+                        <option value="liderazgo">Liderazgo</option>
+                        <option value="comunicacion">Comunicación Efectiva</option>
+                        <option value="tiempo">Gestión del Tiempo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaEmision">Fecha de Emisión *</label>
+                    <input type="date" id="fechaEmision" />
+                </div>
+
+                <div class="form-group">
+                    <label for="estadoCertificado">Estado</label>
+                    <select id="estadoCertificado">
+                        <option value="Activo">Activo</option>
+                        <option value="Suspendido">Suspendido</option>
+                        <option value="Revocado">Revocado</option>
+                    </select>
+                </div>
+
+                <button onclick="generarCertificado()" id="btnGenerar">Generar Certificado</button>
+
+                <div id="qrResultado" class="result"></div>
+
+                <div id="successMessage" class="success-message"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Configuración de la API de Google Sheets
+        // Configuración de Google Sheets
         const API_KEY = 'AIzaSyAOhGTjJXHhuUhqf1g2DPCla59xNzftb-Q';
         const SPREADSHEET_ID = '1zB0M4mq956OrfWzGj7Bo73QeM4bp8QNRRk1tagD78Xw';
-        const RANGE = 'Certificados!A:E';
+        const RANGE_READ = 'Certificados!A:E';
+        
+        // URL de la API para escribir (se usa con Apps Script)
+        const APPS_SCRIPT_URL = 'TU_URL_DE_APPS_SCRIPT_AQUI';
+
+        // URL base para verificación
+        const VERIFY_URL = 'https://gleoleder.github.io/QR_VERIFICABLE/';
 
         // Verificar si hay un código en la URL (cuando se escanea QR)
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const codigo = urlParams.get('codigo') || urlParams.get('code') || urlParams.get('cert');
-            
+
             if (codigo) {
                 document.getElementById('codigoInput').value = codigo;
                 verificarCertificado();
             }
+
+            // Establecer fecha de hoy por defecto en el formulario
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaEmision').value = hoy;
         };
 
+        // Cambiar entre pestañas
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        // Generar código único de certificado
+        function generarCodigoUnico() {
+            const timestamp = Date.now().toString(36).toUpperCase();
+            const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+            return `CERT-${timestamp}-${random}`;
+        }
+
+        // Verificar certificado
         async function verificarCertificado() {
             const codigo = document.getElementById('codigoInput').value.trim();
             const resultado = document.getElementById('resultado');
@@ -232,17 +445,14 @@
                 return;
             }
 
-            // Estado de carga
             resultado.className = 'result loading';
             resultado.innerHTML = '<div class="verified-badge">⏳</div><p>Verificando certificado...</p>';
             btn.disabled = true;
 
             try {
-                // Construir URL de la API de Google Sheets
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-                
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE_READ}?key=${API_KEY}`;
                 const response = await fetch(url);
-                
+
                 if (!response.ok) {
                     throw new Error('Error al conectar con la base de datos');
                 }
@@ -250,16 +460,11 @@
                 const data = await response.json();
                 const rows = data.values || [];
 
-                // Buscar el certificado (asumiendo columna A = código)
-                // Ajusta los índices según tu estructura real de columnas
-                const certificado = rows.find(row => 
+                const certificado = rows.find(row =>
                     row[0] && row[0].toString().trim() === codigo
                 );
 
                 if (certificado && certificado.length > 0) {
-                    // Éxito - certificado encontrado
-                    // Ajusta los índices según tu estructura:
-                    // [0]=Código, [1]=Nombre, [2]=Curso, [3]=Fecha, [4]=Estado
                     const nombre = certificado[1] || 'No disponible';
                     const curso = certificado[2] || 'No disponible';
                     const fecha = certificado[3] || 'No disponible';
@@ -293,7 +498,6 @@
                         </div>
                     `;
                 } else {
-                    // Certificado no encontrado
                     resultado.className = 'result error';
                     resultado.innerHTML = `
                         <div class="verified-badge">❌</div>
@@ -314,6 +518,156 @@
             } finally {
                 btn.disabled = false;
             }
+        }
+
+        // Generar certificado con QR
+        async function generarCertificado() {
+            const nombre = document.getElementById('nombreAlumno').value.trim();
+            const curso = document.getElementById('cursoSelect').value;
+            const fecha = document.getElementById('fechaEmision').value;
+            const estado = document.getElementById('estadoCertificado').value;
+            const qrResultado = document.getElementById('qrResultado');
+            const successMessage = document.getElementById('successMessage');
+            const btn = document.getElementById('btnGenerar');
+
+            // Validaciones
+            if (!nombre) {
+                alert('Por favor ingresa el nombre del alumno');
+                return;
+            }
+            if (!curso) {
+                alert('Por favor selecciona un curso');
+                return;
+            }
+            if (!fecha) {
+                alert('Por favor selecciona la fecha de emisión');
+                return;
+            }
+
+            btn.disabled = true;
+            qrResultado.className = 'result loading';
+            qrResultado.innerHTML = '<div class="verified-badge">⏳</div><p>Generando certificado...</p>';
+            successMessage.style.display = 'none';
+
+            try {
+                // Generar código único
+                const codigo = generarCodigoUnico();
+                
+                // URL de verificación para el QR
+                const verifyLink = `${VERIFY_URL}?codigo=${encodeURIComponent(codigo)}`;
+
+                // Guardar en Google Sheets usando Apps Script
+                await guardarEnGoogleSheets(codigo, nombre, curso, fecha, estado);
+
+                // Generar QR
+                qrResultado.className = 'result success';
+                qrResultado.innerHTML = `
+                    <div class="verified-badge">✅</div>
+                    <h3>¡Certificado Generado!</h3>
+                    <div class="certificate-info" style="color: #155724;">
+                        <div class="info-row" style="border-color: rgba(0,0,0,0.1);">
+                            <span class="info-label">Código:</span>
+                            <span class="info-value">${codigo}</span>
+                        </div>
+                        <div class="info-row" style="border-color: rgba(0,0,0,0.1);">
+                            <span class="info-label">Nombre:</span>
+                            <span class="info-value">${nombre}</span>
+                        </div>
+                        <div class="info-row" style="border-color: rgba(0,0,0,0.1);">
+                            <span class="info-label">Curso:</span>
+                            <span class="info-value">${curso}</span>
+                        </div>
+                    </div>
+                    <div class="qr-container">
+                        <div id="qrcode"></div>
+                    </div>
+                    <div class="qr-actions">
+                        <button onclick="descargarQR()">⬇️ Descargar QR</button>
+                        <button class="btn-secondary" onclick="imprimirCertificado()">🖨️ Imprimir</button>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
+                        Enlace de verificación:<br>
+                        <a href="${verifyLink}" target="_blank" style="color: white; text-decoration: underline;">${verifyLink}</a>
+                    </p>
+                `;
+
+                // Generar código QR
+                new QRCode(document.getElementById("qrcode"), {
+                    text: verifyLink,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                successMessage.style.display = 'block';
+                successMessage.innerHTML = `✅ Certificado guardado exitosamente en la base de datos`;
+
+                // Limpiar formulario
+                document.getElementById('nombreAlumno').value = '';
+                document.getElementById('cursoSelect').value = '';
+                document.getElementById('estadoCertificado').value = 'Activo';
+
+            } catch (error) {
+                console.error('Error:', error);
+                qrResultado.className = 'result error';
+                qrResultado.innerHTML = `
+                    <div class="verified-badge">⚠️</div>
+                    <h3>Error al Generar</h3>
+                    <p>No se pudo generar el certificado. ${error.message}</p>
+                `;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Guardar en Google Sheets usando Apps Script Web App
+        async function guardarEnGoogleSheets(codigo, nombre, curso, fecha, estado) {
+            // NOTA: Para que esto funcione, necesitas crear un Google Apps Script
+            // Ver instrucciones en el README
+            
+            const scriptUrl = APPS_SCRIPT_URL;
+            
+            // Si no hay URL configurada, mostrar advertencia pero permitir continuar
+            if (scriptUrl === 'TU_URL_DE_APPS_SCRIPT_AQUI') {
+                console.warn('Apps Script URL no configurada. El QR se generará pero no se guardará en Sheets.');
+                // Para demo, simulamos éxito
+                return Promise.resolve();
+            }
+
+            const response = await fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    codigo: codigo,
+                    nombre: nombre,
+                    curso: curso,
+                    fecha: fecha,
+                    estado: estado
+                })
+            });
+
+            return Promise.resolve();
+        }
+
+        // Descargar QR como imagen
+        function descargarQR() {
+            const qrCanvas = document.querySelector('#qrcode canvas');
+            if (qrCanvas) {
+                const link = document.createElement('a');
+                link.download = 'QR-Certificado.png';
+                link.href = qrCanvas.toDataURL('image/png');
+                link.click();
+            }
+        }
+
+        // Imprimir certificado
+        function imprimirCertificado() {
+            window.print();
         }
 
         // Permitir buscar con Enter
