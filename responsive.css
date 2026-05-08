@@ -5,15 +5,16 @@
 /* Móviles pequeños (hasta 480px) */
 @media (max-width: 480px) {
     body {
-        padding: 10px;
+        padding: 5px;
     }
     .container {
-        padding: 25px 20px;
-        border-radius: 15px;
+        padding: 15px 12px;
+        border-radius: 12px;
     }
     .logo {
-        width: 100px !important;
-        height: 100px !important;
+        width: 80px !important;
+        height: 80px !important;
+        margin-bottom: 10px !important;
     }
     .login-header .logo {
         width: 100px;
@@ -21,52 +22,76 @@
     }
     h1 {
         font-size: 18px;
+        margin-bottom: 5px !important;
     }
     .subtitle {
-        font-size: 12px;
+        font-size: 11px;
+        margin-bottom: 12px !important;
     }
     .tabs {
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
+        margin-bottom: 12px !important;
     }
     .tab {
-        padding: 10px;
+        padding: 8px 10px;
         font-size: 13px;
     }
     .search-box {
         flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px !important;
     }
     .search-box input,
     .search-box button {
         width: 100%;
+        padding: 10px !important;
+        font-size: 14px !important;
     }
     .filter-group {
         flex-direction: column;
+        gap: 6px;
+        margin-bottom: 10px !important;
+    }
+    .form-group {
+        margin-bottom: 10px !important;
     }
     .form-group input,
     .form-group select {
         font-size: 14px;
+        padding: 10px !important;
     }
     .login-box {
-        padding: 30px 20px;
+        padding: 25px 15px;
         width: 95%;
     }
     .login-header {
-        padding: 30px 20px;
+        padding: 25px 15px;
     }
     .login-header h2 {
         font-size: 22px;
     }
     .verified-badge {
-        font-size: 40px;
+        font-size: 35px;
     }
     .qr-actions,
     .qr-modal-actions {
         flex-direction: column;
+        gap: 8px;
     }
     .qr-actions button,
     .qr-modal-actions button {
         width: 100%;
+        padding: 10px !important;
+    }
+    .result {
+        padding: 12px 10px !important;
+        margin-top: 10px !important;
+    }
+    .scan-hint {
+        padding: 10px !important;
+        font-size: 11px !important;
+        margin-top: 12px !important;
     }
 }
 
