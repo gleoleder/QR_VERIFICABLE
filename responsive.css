@@ -5,21 +5,21 @@
 /* Sello CEAN - Centrado para TODOS los dispositivos */
 .result.success {
     position: relative !important;
-    padding-bottom: 90px !important;
+    padding-bottom: 120px !important;
 }
 .result.success::after {
     content: '' !important;
     position: absolute !important;
-    bottom: 10px !important;
+    bottom: 20px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    width: 80px !important;
-    height: 80px !important;
+    width: 100px !important;
+    height: 100px !important;
     background-image: url('sello-cean.png') !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
     background-size: contain !important;
-    opacity: 1 !important;
+    opacity: 0.4 !important;
     z-index: 9999 !important;
     pointer-events: none !important;
 }
