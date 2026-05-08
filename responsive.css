@@ -2,6 +2,28 @@
    RESPONSIVE - MULTIPLES PANTALLAS
    =========================================== */
 
+/* Sello CEAN - Centrado para TODOS los dispositivos */
+.result.success {
+    position: relative !important;
+    padding-bottom: 90px !important;
+}
+.result.success::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 80px !important;
+    height: 80px !important;
+    background-image: url('sello-cean.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
+    opacity: 1 !important;
+    z-index: 9999 !important;
+    pointer-events: none !important;
+}
+
 /* Móviles pequeños (hasta 480px) */
 @media (max-width: 480px) {
     body {
@@ -97,27 +119,10 @@
         font-size: 12px !important;
         margin-bottom: 3px !important;
     }
-    
+
     /* Resultado de verificación - márgenes ultra estrechos */
     .result.success {
         padding: 10px 8px !important;
-        position: relative !important;
-        padding-bottom: 80px !important;
-    }
-    .result.success::after {
-        content: '' !important;
-        position: absolute !important;
-        bottom: 10px !important;
-        right: 10px !important;
-        width: 70px !important;
-        height: 70px !important;
-        background-image: url('sello-cean.png') !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
-        background-size: contain !important;
-        opacity: 1 !important;
-        z-index: 9999 !important;
-        pointer-events: none !important;
     }
     .result.success h3 {
         font-size: 14px !important;
