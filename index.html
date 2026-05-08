@@ -233,6 +233,13 @@
         <h1>CEAN Capacitación <span id="adminBadge" class="admin-badge hidden">ADMIN</span></h1>
         <p class="subtitle">Sistema de Certificados</p>
 
+        <!-- Botón Login Admin (visible si no está logueado) -->
+        <div id="loginContainer" style="margin-bottom: 20px;">
+            <button onclick="openLogin()" style="background: #1a1a2e; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 0 auto;">
+                🔐 Acceso Admin
+            </button>
+        </div>
+
         <div class="tabs">
             <button class="tab active" onclick="switchTab('verificar')">🔍 Verificar</button>
             <button class="tab" onclick="checkAuthAndOpen('generar')">📋 Generar QR</button>
@@ -351,11 +358,20 @@
             if (savedAuth === 'true') {
                 isAdmin = true;
                 document.getElementById('adminBadge').classList.remove('hidden');
+                document.getElementById('loginContainer').style.display = 'none';
             }
 
             // Cargar cursos
             await cargarCursos();
         };
+
+        // Abrir login manualmente
+        function openLogin() {
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('adminUser').value = '';
+            document.getElementById('adminPass').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
 
         // ===========================================
         // NAVEGACIÓN Y AUTENTICACIÓN
@@ -402,6 +418,7 @@
             isAdmin = false;
             localStorage.removeItem('ceanAdminAuth');
             document.getElementById('adminBadge').classList.add('hidden');
+            document.getElementById('loginContainer').style.display = 'block';
             switchTab('verificar');
         }
 
