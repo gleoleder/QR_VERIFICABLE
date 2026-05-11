@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="responsive.css" />
     <script>
         // Función para generar QR con logo en el centro
-        function generarQRConLogo(containerId, text, logoUrl, size = 400, logoSize = 60) {
+        function generarQRConLogo(containerId, text, logoUrl, size = 400, logoSize = 75) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             
@@ -58,7 +58,7 @@
                 logo.onload = () => {
                     const x = (size - logoSize) / 2;
                     const y = (size - logoSize) / 2;
-                    const padding = 5; // Grosor del contorno
+                    const padding = 6; // Grosor del contorno blanco
                     
                     // Crear canvas temporal para procesar logo
                     const tempLogoCanvas = document.createElement('canvas');
@@ -78,16 +78,18 @@
                             
                             // Si el píxel es parte del logo (no transparente)
                             if (alpha > 50) {
-                                // Dibujar contorno en los píxeles vecinos
+                                // Dibujar contorno blanco en los píxeles vecinos
                                 for (let oy = -padding; oy <= padding; oy++) {
                                     for (let ox = -padding; ox <= padding; ox++) {
+                                        if (ox === 0 && oy === 0) continue;
+                                        
                                         const nx = px + ox;
                                         const ny = py + oy;
-                                        const nIdx = (ny * logoSize + nx) * 4;
                                         
                                         // Verificar límites
                                         if (nx >= 0 && nx < logoSize && ny >= 0 && ny < logoSize) {
-                                            // Si el vecino es transparente, dibujar contorno
+                                            const nIdx = (ny * logoSize + nx) * 4;
+                                            // Si el vecino es transparente, dibujar contorno blanco
                                             if (logoImageData.data[nIdx + 3] < 50) {
                                                 ctx.fillStyle = '#ffffff';
                                                 ctx.fillRect(x + nx, y + ny, 1, 1);
@@ -100,15 +102,17 @@
                     }
                     
                     // Dibujar borde dorado exterior
+                    const goldPadding = padding + 2;
                     for (let py = 0; py < logoSize; py++) {
                         for (let px = 0; px < logoSize; px++) {
                             const idx = (py * logoSize + px) * 4;
                             const alpha = logoImageData.data[idx + 3];
                             
                             if (alpha > 50) {
-                                for (let oy = -(padding + 1); oy <= padding + 1; oy++) {
-                                    for (let ox = -(padding + 1); ox <= padding + 1; ox++) {
-                                        if (Math.abs(ox) + Math.abs(oy) !== padding + 1) continue;
+                                for (let oy = -goldPadding; oy <= goldPadding; oy++) {
+                                    for (let ox = -goldPadding; ox <= goldPadding; ox++) {
+                                        const dist = Math.sqrt(ox * ox + oy * oy);
+                                        if (dist < goldPadding - 0.5 || dist > goldPadding + 0.5) continue;
                                         
                                         const nx = px + ox;
                                         const ny = py + oy;
@@ -654,7 +658,7 @@
                 </p>
             `;
             setTimeout(() => {
-                generarQRConLogo('qrcode-existente', verifyLink, 'logo-cean.png', 400, 60);
+                generarQRConLogo('qrcode-existente', verifyLink, 'logo-cean.png', 400, 75);
             }, 100);
             switchTab('generar');
         }
@@ -674,7 +678,7 @@
             document.getElementById('qrModalNombre').textContent = nombre;
             document.getElementById('qrModalOverlay').classList.remove('hidden');
             setTimeout(() => {
-                generarQRConLogo('qrModalContent', verifyLink, 'logo-cean.png', 400, 60);
+                generarQRConLogo('qrModalContent', verifyLink, 'logo-cean.png', 400, 75);
             }, 100);
         }
 
@@ -784,7 +788,7 @@
                     </p>
                 `;
                 setTimeout(() => {
-                    generarQRConLogo('qrcode', verifyLink, 'logo-cean.png', 400, 60);
+                    generarQRConLogo('qrcode', verifyLink, 'logo-cean.png', 400, 75);
                 }, 100);
                 successMessage.style.display = 'block';
                 successMessage.innerHTML = '✅ Guardado en la base de datos';
