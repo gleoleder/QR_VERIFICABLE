@@ -6,6 +6,75 @@
     <title>Admin QR - CEAN Capacitación</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="responsive.css" />
+    <script>
+        // Función para generar QR con logo en el centro
+        function generarQRConLogo(containerId, text, logoUrl, size = 200, logoSize = 50) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            // Crear QR temporal
+            const tempDiv = document.createElement('div');
+            tempDiv.style.display = 'none';
+            container.appendChild(tempDiv);
+            
+            new QRCode(tempDiv, {
+                text: text,
+                width: size,
+                height: size,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Esperar a que se genere el QR
+            setTimeout(() => {
+                const qrCanvas = tempDiv.querySelector('canvas');
+                const qrImg = tempDiv.querySelector('img');
+                
+                // Crear canvas final
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = size;
+                finalCanvas.height = size;
+                const ctx = finalCanvas.getContext('2d');
+                
+                // Dibujar fondo blanco
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, size, size);
+                
+                // Dibujar QR
+                if (qrCanvas) {
+                    ctx.drawImage(qrCanvas, 0, 0);
+                } else if (qrImg) {
+                    ctx.drawImage(qrImg, 0, 0);
+                }
+                
+                // Agregar canvas al container inmediatamente
+                container.innerHTML = '';
+                container.appendChild(finalCanvas);
+                
+                // Dibujar logo en el centro
+                const logo = new Image();
+                logo.crossOrigin = 'anonymous';
+                logo.onload = () => {
+                    const x = (size - logoSize) / 2;
+                    const y = (size - logoSize) / 2;
+                    
+                    // Fondo blanco para el logo
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+                    
+                    // Borde dorado
+                    ctx.strokeStyle = '#d4af37';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+                    
+                    // Dibujar logo
+                    ctx.drawImage(logo, x, y, logoSize, logoSize);
+                };
+                logo.src = logoUrl;
+            }, 100);
+        }
+    </script>
     <style>
         .icon { width: 20px; height: 20px; fill: currentColor; vertical-align: middle; }
         .icon-lg { width: 24px; height: 24px; }
@@ -526,15 +595,7 @@
                 </p>
             `;
             setTimeout(() => {
-                document.getElementById('qrcode-existente').innerHTML = '';
-                new QRCode(document.getElementById("qrcode-existente"), {
-                    text: verifyLink,
-                    width: 200,
-                    height: 200,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
+                generarQRConLogo('qrcode-existente', verifyLink, 'logo-cean.png', 200, 50);
             }, 100);
             switchTab('generar');
         }
@@ -554,14 +615,7 @@
             document.getElementById('qrModalNombre').textContent = nombre;
             document.getElementById('qrModalOverlay').classList.remove('hidden');
             setTimeout(() => {
-                new QRCode(document.getElementById("qrModalContent"), {
-                    text: verifyLink,
-                    width: 200,
-                    height: 200,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
+                generarQRConLogo('qrModalContent', verifyLink, 'logo-cean.png', 200, 50);
             }, 100);
         }
 
@@ -670,14 +724,9 @@
                         Link: <a href="${verifyLink}" target="_blank" style="color: white;">${verifyLink}</a>
                     </p>
                 `;
-                new QRCode(document.getElementById("qrcode"), {
-                    text: verifyLink,
-                    width: 200,
-                    height: 200,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
+                setTimeout(() => {
+                    generarQRConLogo('qrcode', verifyLink, 'logo-cean.png', 200, 50);
+                }, 100);
                 successMessage.style.display = 'block';
                 successMessage.innerHTML = '✅ Guardado en la base de datos';
                 document.getElementById('nombreAlumno').value = '';
