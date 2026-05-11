@@ -58,7 +58,7 @@
                 logo.onload = () => {
                     const x = (size - logoSize) / 2;
                     const y = (size - logoSize) / 2;
-                    const padding = 6; // Grosor del contorno blanco
+                    const padding = 7; // Grosor del contorno blanco
                     
                     // Crear canvas temporal para procesar logo
                     const tempLogoCanvas = document.createElement('canvas');
@@ -92,35 +92,6 @@
                                             // Si el vecino es transparente, dibujar contorno blanco
                                             if (logoImageData.data[nIdx + 3] < 50) {
                                                 ctx.fillStyle = '#ffffff';
-                                                ctx.fillRect(x + nx, y + ny, 1, 1);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Dibujar borde dorado exterior
-                    const goldPadding = padding + 2;
-                    for (let py = 0; py < logoSize; py++) {
-                        for (let px = 0; px < logoSize; px++) {
-                            const idx = (py * logoSize + px) * 4;
-                            const alpha = logoImageData.data[idx + 3];
-                            
-                            if (alpha > 50) {
-                                for (let oy = -goldPadding; oy <= goldPadding; oy++) {
-                                    for (let ox = -goldPadding; ox <= goldPadding; ox++) {
-                                        const dist = Math.sqrt(ox * ox + oy * oy);
-                                        if (dist < goldPadding - 0.5 || dist > goldPadding + 0.5) continue;
-                                        
-                                        const nx = px + ox;
-                                        const ny = py + oy;
-                                        
-                                        if (nx >= 0 && nx < logoSize && ny >= 0 && ny < logoSize) {
-                                            const nIdx = (ny * logoSize + nx) * 4;
-                                            if (logoImageData.data[nIdx + 3] < 50) {
-                                                ctx.fillStyle = '#d4af37';
                                                 ctx.fillRect(x + nx, y + ny, 1, 1);
                                             }
                                         }
