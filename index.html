@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="responsive.css" />
     <script>
         // Función para generar QR con logo en el centro
-        function generarQRConLogo(containerId, text, logoUrl, size = 400, logoSize = 80) {
+        function generarQRConLogo(containerId, text, logoUrl, size = 400, logoSize = 60) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             
@@ -58,40 +58,76 @@
                 logo.onload = () => {
                     const x = (size - logoSize) / 2;
                     const y = (size - logoSize) / 2;
-                    const padding = 8; // Contorno blanco alrededor del logo
+                    const padding = 5; // Grosor del contorno
                     
-                    // Contorno blanco circular
-                    ctx.beginPath();
-                    ctx.arc(x + logoSize/2, y + logoSize/2, logoSize/2 + padding, 0, Math.PI * 2);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fill();
+                    // Crear canvas temporal para procesar logo
+                    const tempLogoCanvas = document.createElement('canvas');
+                    tempLogoCanvas.width = logoSize;
+                    tempLogoCanvas.height = logoSize;
+                    const tempCtx = tempLogoCanvas.getContext('2d');
+                    tempCtx.drawImage(logo, 0, 0, logoSize, logoSize);
                     
-                    // Borde dorado circular
-                    ctx.beginPath();
-                    ctx.arc(x + logoSize/2, y + logoSize/2, logoSize/2 + padding, 0, Math.PI * 2);
-                    ctx.strokeStyle = '#d4af37';
-                    ctx.lineWidth = 3;
-                    ctx.stroke();
+                    // Obtener imagen con transparencia
+                    const logoImageData = tempCtx.getImageData(0, 0, logoSize, logoSize);
                     
-                    // Sombra suave
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-                    ctx.shadowBlur = 4;
-                    ctx.shadowOffsetX = 0;
-                    ctx.shadowOffsetY = 2;
+                    // Dibujar contorno blanco siguiendo la forma del logo
+                    for (let py = 0; py < logoSize; py++) {
+                        for (let px = 0; px < logoSize; px++) {
+                            const idx = (py * logoSize + px) * 4;
+                            const alpha = logoImageData.data[idx + 3];
+                            
+                            // Si el píxel es parte del logo (no transparente)
+                            if (alpha > 50) {
+                                // Dibujar contorno en los píxeles vecinos
+                                for (let oy = -padding; oy <= padding; oy++) {
+                                    for (let ox = -padding; ox <= padding; ox++) {
+                                        const nx = px + ox;
+                                        const ny = py + oy;
+                                        const nIdx = (ny * logoSize + nx) * 4;
+                                        
+                                        // Verificar límites
+                                        if (nx >= 0 && nx < logoSize && ny >= 0 && ny < logoSize) {
+                                            // Si el vecino es transparente, dibujar contorno
+                                            if (logoImageData.data[nIdx + 3] < 50) {
+                                                ctx.fillStyle = '#ffffff';
+                                                ctx.fillRect(x + nx, y + ny, 1, 1);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     
-                    // Dibujar logo circular
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.arc(x + logoSize/2, y + logoSize/2, logoSize/2, 0, Math.PI * 2);
-                    ctx.clip();
+                    // Dibujar borde dorado exterior
+                    for (let py = 0; py < logoSize; py++) {
+                        for (let px = 0; px < logoSize; px++) {
+                            const idx = (py * logoSize + px) * 4;
+                            const alpha = logoImageData.data[idx + 3];
+                            
+                            if (alpha > 50) {
+                                for (let oy = -(padding + 1); oy <= padding + 1; oy++) {
+                                    for (let ox = -(padding + 1); ox <= padding + 1; ox++) {
+                                        if (Math.abs(ox) + Math.abs(oy) !== padding + 1) continue;
+                                        
+                                        const nx = px + ox;
+                                        const ny = py + oy;
+                                        
+                                        if (nx >= 0 && nx < logoSize && ny >= 0 && ny < logoSize) {
+                                            const nIdx = (ny * logoSize + nx) * 4;
+                                            if (logoImageData.data[nIdx + 3] < 50) {
+                                                ctx.fillStyle = '#d4af37';
+                                                ctx.fillRect(x + nx, y + ny, 1, 1);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Dibujar logo final sobre el contorno
                     ctx.drawImage(logo, x, y, logoSize, logoSize);
-                    ctx.restore();
-                    
-                    // Reset sombra
-                    ctx.shadowColor = 'transparent';
-                    ctx.shadowBlur = 0;
-                    ctx.shadowOffsetX = 0;
-                    ctx.shadowOffsetY = 0;
                 };
                 logo.src = logoUrl;
             }, 100);
@@ -618,7 +654,7 @@
                 </p>
             `;
             setTimeout(() => {
-                generarQRConLogo('qrcode-existente', verifyLink, 'logo-cean.png', 400, 80);
+                generarQRConLogo('qrcode-existente', verifyLink, 'logo-cean.png', 400, 60);
             }, 100);
             switchTab('generar');
         }
@@ -638,7 +674,7 @@
             document.getElementById('qrModalNombre').textContent = nombre;
             document.getElementById('qrModalOverlay').classList.remove('hidden');
             setTimeout(() => {
-                generarQRConLogo('qrModalContent', verifyLink, 'logo-cean.png', 400, 80);
+                generarQRConLogo('qrModalContent', verifyLink, 'logo-cean.png', 400, 60);
             }, 100);
         }
 
@@ -748,7 +784,7 @@
                     </p>
                 `;
                 setTimeout(() => {
-                    generarQRConLogo('qrcode', verifyLink, 'logo-cean.png', 400, 80);
+                    generarQRConLogo('qrcode', verifyLink, 'logo-cean.png', 400, 60);
                 }, 100);
                 successMessage.style.display = 'block';
                 successMessage.innerHTML = '✅ Guardado en la base de datos';
